@@ -1,4 +1,4 @@
-/* ===========================================
+﻿/* ===========================================
    subscribers.js - صفحة إدارة المشتركين
    =========================================== */
 
@@ -7,12 +7,12 @@ GM.registerView('subscribers', {
     <div>
       <div class="page-header">
         <div>
-          <h2><i class="fas fa-users"></i> المشتركين</h2>
+          <h2><span class="material-symbols-rounded">group</span> المشتركين</h2>
           <div class="subtitle">إدارة جميع المشتركين في النظام</div>
         </div>
         <div class="page-actions">
           <button v-if="can('subscribers_add')" class="btn btn-primary" @click="openAdd">
-            <i class="fas fa-plus"></i> اضافة
+            <span class="material-symbols-rounded">add</span> اضافة
           </button>
         </div>
       </div>
@@ -21,7 +21,7 @@ GM.registerView('subscribers', {
       <div class="card" style="margin-bottom:1rem;padding:.85rem 1rem">
         <div class="filter-bar">
           <div class="search-input" style="flex:1;min-width:160px">
-            <i class="fas fa-search"></i>
+            <span class="material-symbols-rounded">search</span>
             <input v-model="search" placeholder="بحث عن مشترك...">
           </div>
           <div class="form-group" style="min-width:120px">
@@ -71,17 +71,17 @@ GM.registerView('subscribers', {
               <span v-if="s.status === 'inactive'" class="badge badge-danger">ملغي</span>
             </div>
             <div class="sub-meta">
-              <span class="amps-badge"><i class="fas fa-bolt"></i> {{ s.amps }} أمبير</span>
-              <span><i class="fas fa-layer-group"></i> {{ getBoardName(s.boardId) }}</span>
+              <span class="amps-badge"><span class="material-symbols-rounded">bolt</span> {{ s.amps }} أمبير</span>
+              <span><span class="material-symbols-rounded">layers</span> {{ getBoardName(s.boardId) }}</span>
             </div>
           </div>
           <div class="sub-amps">
             <div class="sub-pct" :style="{color: subColor(s)}" v-if="s.status !== 'inactive'">{{ subPayPercent(s) }}%</div>
-            <i class="fas fa-chevron-left" style="color:var(--text-light);font-size:.7rem"></i>
+            <span class="material-symbols-rounded" style="color:var(--text-light);font-size:.7rem">chevron_left</span>
           </div>
         </div>
         <div v-if="filteredList.length === 0" class="empty-state">
-          <i class="fas fa-users"></i>
+          <span class="material-symbols-rounded">group</span>
           <p>{{ subscribers.length === 0 ? 'لا يوجد مشتركين' : 'لا توجد نتائج' }}</p>
         </div>
       </div>
@@ -96,29 +96,29 @@ GM.registerView('subscribers', {
       <div class="modal-overlay" v-if="showDetail" @click.self="showDetail = false">
         <div class="modal modal-lg">
           <div class="modal-header">
-            <h3><i class="fas fa-user"></i> {{ detailSub.name }}</h3>
-            <button class="modal-close" @click="showDetail = false"><i class="fas fa-times"></i></button>
+            <h3><span class="material-symbols-rounded">person</span> {{ detailSub.name }}</h3>
+            <button class="modal-close" @click="showDetail = false"><span class="material-symbols-rounded">close</span></button>
           </div>
           <div class="modal-body">
             <!-- معلومات سريعة -->
             <div class="detail-grid">
               <div class="dg-item">
-                <i class="fas fa-bolt" style="color:var(--warning)"></i>
+                <span class="material-symbols-rounded" style="color:var(--warning)">bolt</span>
                 <span class="dg-label">الامبير</span>
                 <span class="dg-value">{{ detailSub.amps }}</span>
               </div>
               <div class="dg-item" :class="{success: detailPaid, danger: !detailPaid && detailSub.status !== 'inactive'}">
-                <i class="fas fa-check-circle"></i>
+                <span class="material-symbols-rounded">check_circle</span>
                 <span class="dg-label">{{ currentMonthName }}</span>
                 <span class="dg-value">{{ detailPaid ? 'مدفوع' : 'غير مدفوع' }}</span>
               </div>
               <div class="dg-item">
-                <i class="fas fa-layer-group" style="color:var(--primary)"></i>
+                <span class="material-symbols-rounded" style="color:var(--primary)">layers</span>
                 <span class="dg-label">البورد</span>
                 <span class="dg-value">{{ getBoardName(detailSub.boardId) }}</span>
               </div>
               <div class="dg-item">
-                <i class="fas fa-map-marker-alt" style="color:var(--teal)"></i>
+                <span class="material-symbols-rounded" style="color:var(--teal)">location_on</span>
                 <span class="dg-label">المنطقة</span>
                 <span class="dg-value">{{ getAreaName(detailSub.areaId) }}</span>
               </div>
@@ -127,25 +127,25 @@ GM.registerView('subscribers', {
             <!-- أزرار التحكم -->
             <div class="detail-actions">
               <button class="btn btn-lg btn-block" :class="detailPaid ? 'btn-ghost-danger' : 'btn-success'" @click="togglePay" :disabled="detailSub.status === 'inactive'">
-                <i class="fas" :class="detailPaid ? 'fa-times' : 'fa-check'"></i>
+                <span class="material-symbols-rounded">{{ detailPaid ? 'close' : 'check' }}</span>
                 {{ detailPaid ? 'الغاء الدفع' : 'تسجيل الدفعة' }}
               </button>
               <button v-if="can('subscribers_edit')" class="btn btn-ghost-primary btn-lg btn-block" @click="editFromDetail">
-                <i class="fas fa-edit"></i> تعديل بيانات المشترك
+                <span class="material-symbols-rounded">edit</span> تعديل بيانات المشترك
               </button>
             </div>
 
             <!-- إرسال رسالة واتساب -->
             <div class="detail-section">
-              <div class="detail-section-title"><i class="fab fa-whatsapp"></i> إرسال رسالة</div>
+              <div class="detail-section-title"><span class="material-symbols-rounded">chat</span> إرسال رسالة</div>
               <button class="btn btn-whatsapp btn-lg btn-block" @click="goToMessages">
-                <i class="fab fa-whatsapp"></i> ارسال عبر واتساب
+                <span class="material-symbols-rounded">chat</span> ارسال عبر واتساب
               </button>
             </div>
 
             <!-- الأرشيف الشهري -->
             <div class="detail-section">
-              <div class="detail-section-title"><i class="fas fa-archive"></i> الأرشيف الشهري</div>
+              <div class="detail-section-title"><span class="material-symbols-rounded">archive</span> الأرشيف الشهري</div>
               <div class="pay-history">
                 <div v-for="year in payYears" :key="year" class="pay-year">
                   <div class="pay-year-title">{{ year }}</div>
@@ -157,7 +157,7 @@ GM.registerView('subscribers', {
                       :class="{paid: isMonthPaid(m, year), current: isCurrentMonth(m, year)}"
                       @click="toggleMonthPay(m, year)"
                     >
-                      <div class="pm-status"><i class="fas" :class="isMonthPaid(m, year) ? 'fa-check-circle' : 'fa-circle'"></i></div>
+                      <div class="pm-status"><span class="material-symbols-rounded">{{ isMonthPaid(m, year) ? 'check_circle' : 'radio_button_unchecked' }}</span></div>
                       <div class="pm-name">{{ getMonthOrdinal(m, year) }}</div>
                       <div class="pm-amount">{{ getMonthAmount(m, year) }}</div>
                       <div class="pm-date" v-if="getMonthPaidAt(m, year)">{{ getMonthPaidAt(m, year) }}</div>
@@ -171,7 +171,7 @@ GM.registerView('subscribers', {
             <!-- حذف -->
             <div v-if="can('subscribers_delete')" style="margin-top:.75rem;text-align:center">
               <button class="btn btn-ghost-danger btn-sm" @click="confirmDelete(detailSub)">
-                <i class="fas fa-trash"></i> حذف المشترك
+                <span class="material-symbols-rounded">delete</span> حذف المشترك
               </button>
             </div>
           </div>
@@ -182,8 +182,8 @@ GM.registerView('subscribers', {
       <div class="modal-overlay" v-if="showForm" @click.self="closeForm">
         <div class="modal modal-lg">
           <div class="modal-header">
-            <h3><i :class="formMode === 'add' ? 'fas fa-plus-circle' : 'fas fa-edit'"></i> {{ formMode === 'add' ? 'اضافة' : 'تعديل' }} مشترك</h3>
-            <button class="modal-close" @click="closeForm"><i class="fas fa-times"></i></button>
+            <h3><span class="material-symbols-rounded">{{ formMode === 'add' ? 'add_circle' : 'edit' }}</span> {{ formMode === 'add' ? 'اضافة' : 'تعديل' }} مشترك</h3>
+            <button class="modal-close" @click="closeForm"><span class="material-symbols-rounded">close</span></button>
           </div>
           <div class="modal-body">
             <div class="form-row">
@@ -241,7 +241,7 @@ GM.registerView('subscribers', {
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-primary" @click="saveItem"><i class="fas fa-save"></i> {{ formMode === 'add' ? 'اضافة' : 'حفظ' }}</button>
+            <button class="btn btn-primary" @click="saveItem"><span class="material-symbols-rounded">save</span> {{ formMode === 'add' ? 'اضافة' : 'حفظ' }}</button>
             <button class="btn btn-ghost" @click="closeForm">الغاء</button>
           </div>
         </div>
@@ -251,13 +251,13 @@ GM.registerView('subscribers', {
       <div class="modal-overlay" v-if="showConfirm" @click.self="showConfirm = false">
         <div class="modal modal-sm">
           <div class="modal-header">
-            <h3><i class="fas fa-exclamation-triangle" style="color:var(--danger)"></i> تاكيد الحذف</h3>
+            <h3><span class="material-symbols-rounded" style="color:var(--danger)">warning</span> تاكيد الحذف</h3>
           </div>
           <div class="modal-body">
             <p>هل انت متاكد من حذف <strong>{{ deletingItem ? deletingItem.name : '' }}</strong>؟</p>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-danger" @click="doDelete"><i class="fas fa-trash"></i> حذف</button>
+            <button class="btn btn-danger" @click="doDelete"><span class="material-symbols-rounded">delete</span> حذف</button>
             <button class="btn btn-ghost" @click="showConfirm = false">الغاء</button>
           </div>
         </div>
@@ -366,8 +366,8 @@ GM.registerView('subscribers', {
       const pct = this.subPayPercent(s);
       const hue = Math.min(120, (pct / 100) * 120);
       return {
-        borderColor: `hsl(${hue}, 70%, 80%)`,
-        background: `hsl(${hue}, 60%, 95%)`
+        borderColor: `hsla(${hue}, 70%, 50%, .25)`,
+        background: `hsla(${hue}, 70%, 50%, .06)`
       };
     },
     // Detail
@@ -472,3 +472,4 @@ GM.registerView('subscribers', {
     showToast(msg, type) { this.$emit('toast', msg, type); }
   }
 });
+

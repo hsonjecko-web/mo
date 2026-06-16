@@ -1,4 +1,4 @@
-/* ===========================================
+﻿/* ===========================================
    app.js - ملف التطبيق الرئيسي
    ===========================================
    هذا الملف يقوم بـ:
@@ -28,7 +28,7 @@
         currentUser: null,
         currentView: 'dashboard',
         sidebarOpen: false,
-        theme: localStorage.getItem('gm_theme') || 'light',
+        theme: localStorage.getItem('gm_theme') || 'dark',
 
         // --- حالة تسجيل الدخول ---
         loginForm: { username: '', password: '' },
@@ -102,9 +102,9 @@
       showToast(message, type) {
         if (this.toastTimer) clearTimeout(this.toastTimer);
         const icons = {
-          success: 'fas fa-check-circle',
-          error: 'fas fa-exclamation-circle',
-          warning: 'fas fa-exclamation-triangle'
+          success: 'check_circle',
+          error: 'error',
+          warning: 'warning'
         };
         this.toast = { message, type, icon: icons[type] || icons.success };
         this.toastTimer = setTimeout(() => { this.toast = null; }, 3000);

@@ -1,4 +1,4 @@
-/* ===========================================
+﻿/* ===========================================
    expenses.js - صفحة المصروفات
    ===========================================
    - عرض جميع المصروفات
@@ -11,12 +11,12 @@ GM.registerView('expenses', {
     <div>
       <div class="page-header">
         <div>
-          <h2><i class="fas fa-money-bill-wave"></i> المصروفات</h2>
+          <h2><span class="material-symbols-rounded">payments</span> المصروفات</h2>
           <div class="subtitle">إدارة مصروفات المولدات والصيانة</div>
         </div>
         <div class="page-actions">
           <button v-if="can('expenses_add')" class="btn btn-danger" @click="openAdd">
-            <i class="fas fa-plus"></i> اضافة مصروف
+            <span class="material-symbols-rounded">add</span> اضافة مصروف
           </button>
         </div>
       </div>
@@ -64,19 +64,16 @@ GM.registerView('expenses', {
       <!-- ملخص المصروفات -->
       <div class="stats-grid" style="margin-bottom:1rem">
         <div class="stat-card gradient-rose">
-          <i class="fas fa-shopping-cart stat-icon"></i>
           <div class="stat-label">اجمالي المصروفات</div>
           <div class="stat-value">{{ formatMoney(totalExpenses) }}</div>
           <div class="stat-sub">لشهر {{ monthName(filterMonth) }} {{ filterYear }}</div>
         </div>
         <div class="stat-card gradient-teal">
-          <i class="fas fa-list stat-icon"></i>
           <div class="stat-label">عدد المصروفات</div>
           <div class="stat-value">{{ filteredList.length }}</div>
           <div class="stat-sub">عملية صرف</div>
         </div>
         <div class="stat-card gradient-blue">
-          <i class="fas fa-layer-group stat-icon"></i>
           <div class="stat-label">عدد الاصناف</div>
           <div class="stat-value">{{ categories.length }}</div>
           <div class="stat-sub">صنف مصروفات</div>
@@ -107,17 +104,17 @@ GM.registerView('expenses', {
                 <td>{{ getGeneratorName(e.generatorId) || '-' }}</td>
                 <td><strong style="color:var(--rose)">{{ formatMoney(e.amount) }}</strong></td>
                 <td v-if="can('expenses_edit') || can('expenses_delete')">
-                  <button v-if="can('expenses_edit')" class="btn btn-info btn-xs" @click="openEdit(e)"><i class="fas fa-edit"></i></button>
-                  <button v-if="can('expenses_delete')" class="btn btn-danger btn-xs" @click="deleteExp(e)"><i class="fas fa-trash"></i></button>
+                  <button v-if="can('expenses_edit')" class="btn btn-info btn-xs" @click="openEdit(e)"><span class="material-symbols-rounded">edit</span></button>
+                  <button v-if="can('expenses_delete')" class="btn btn-danger btn-xs" @click="deleteExp(e)"><span class="material-symbols-rounded">delete</span></button>
                 </td>
               </tr>
             </tbody>
           </table>
           <div v-else class="empty-state">
-            <i class="fas fa-money-bill-wave"></i>
+            <span class="material-symbols-rounded">payments</span>
             <p>لا توجد مصروفات لهذا الشهر</p>
             <p v-if="can('expenses_add')" class="sub-text">
-              <button class="btn btn-danger btn-sm" @click="openAdd" style="margin-top:.5rem"><i class="fas fa-plus"></i> اضافة مصروف</button>
+              <button class="btn btn-danger btn-sm" @click="openAdd" style="margin-top:.5rem"><span class="material-symbols-rounded">add</span> اضافة مصروف</button>
             </p>
           </div>
         </div>
@@ -127,8 +124,8 @@ GM.registerView('expenses', {
       <div class="modal-overlay" v-if="showModal" @click.self="closeModal">
         <div class="modal">
           <div class="modal-header">
-            <h3><i :class="modalMode === 'add' ? 'fas fa-plus-circle' : 'fas fa-edit'"></i> {{ modalMode === 'add' ? 'اضافة' : 'تعديل' }} مصروف</h3>
-            <button class="modal-close" @click="closeModal"><i class="fas fa-times"></i></button>
+            <h3><span class="material-symbols-rounded">{{ modalMode === 'add' ? 'add_circle' : 'edit' }}</span> {{ modalMode === 'add' ? 'اضافة' : 'تعديل' }} مصروف</h3>
+            <button class="modal-close" @click="closeModal"><span class="material-symbols-rounded">close</span></button>
           </div>
           <div class="modal-body">
             <div class="form-row">
@@ -171,7 +168,7 @@ GM.registerView('expenses', {
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-danger" @click="saveItem"><i class="fas fa-save"></i> {{ modalMode === 'add' ? 'اضافة' : 'حفظ' }}</button>
+            <button class="btn btn-danger" @click="saveItem"><span class="material-symbols-rounded">save</span> {{ modalMode === 'add' ? 'اضافة' : 'حفظ' }}</button>
             <button class="btn btn-ghost" @click="closeModal">الغاء</button>
           </div>
         </div>

@@ -1,4 +1,4 @@
-/* ===========================================
+﻿/* ===========================================
    footer.js - مكون الفوتر (Footer Component)
    ===========================================
    المسؤولية: عرض الفوتر السفلي مع:
@@ -14,31 +14,25 @@ GM.registerComponent('app-footer', {
         <!-- أزرار التصفح السريع -->
         <div class="footer-nav">
           <button v-if="can('dashboard')" class="footer-btn" :class="{active: activeView === 'dashboard'}" @click="nav('dashboard')">
-            <i class="fas fa-chart-pie"></i>
+            <span class="material-symbols-rounded">monitoring</span>
             <span>الرئيسية</span>
           </button>
           <button v-if="can('subscribers_view')" class="footer-btn" :class="{active: activeView === 'subscribers'}" @click="nav('subscribers')">
-            <i class="fas fa-users"></i>
+            <span class="material-symbols-rounded">group</span>
             <span>المشتركين</span>
           </button>
-
           <button class="footer-btn" :class="{active: activeView === 'quickpay'}" @click="nav('quickpay')">
-            <i class="fas fa-hand-holding-usd"></i>
+            <span class="material-symbols-rounded">volunteer_activism</span>
             <span>دفع سريع</span>
           </button>
           <button v-if="can('expenses_view')" class="footer-btn" :class="{active: activeView === 'expenses'}" @click="nav('expenses')">
-            <i class="fas fa-money-bill-wave"></i>
+            <span class="material-symbols-rounded">payments</span>
             <span>المصروفات</span>
           </button>
           <button v-if="can('settings_view')" class="footer-btn" :class="{active: activeView === 'settings'}" @click="nav('settings')">
-            <i class="fas fa-cog"></i>
+            <span class="material-symbols-rounded">settings</span>
             <span>الإعدادات</span>
           </button>
-        </div>
-        <!-- حقوق النشر -->
-        <div class="footer-copy">
-          <i class="fas fa-bolt" style="color:var(--warning)"></i>
-          نظام إدارة مشتركي المولدات v2.0
         </div>
       </div>
     </footer>

@@ -1,4 +1,4 @@
-/* ===========================================
+﻿/* ===========================================
    messages.js - صفحة الرسائل والواتساب
    ===========================================
    معالج إرسال متكامل بـ 4 خطوات:
@@ -13,12 +13,12 @@ GM.registerView('messages', {
     <div>
       <div class="page-header">
         <div>
-          <h2><i class="fab fa-whatsapp"></i> الرسائل والإرسال</h2>
+          <h2><span class="material-symbols-rounded">chat</span> الرسائل والإرسال</h2>
           <div class="subtitle">إرسال رسائل تذكير عبر واتساب للمشتركين</div>
         </div>
         <div class="page-actions">
           <button v-if="can('messages_templates')" class="btn btn-ghost-primary" @click="openTemplateModal">
-            <i class="fas fa-plus"></i> قالب جديد
+            <span class="material-symbols-rounded">add</span> قالب جديد
           </button>
         </div>
       </div>
@@ -26,19 +26,19 @@ GM.registerView('messages', {
       <!-- ====== الخطوات ====== -->
       <div class="steps">
         <div class="step" :class="{active: step === 1, completed: step > 1}" @click="step = Math.max(step, 1)">
-          <span class="step-num"><i :class="step > 1 ? 'fas fa-check' : '1'"></i></span>
+          <span class="step-num"><span class="material-symbols-rounded">{{ step > 1 ? 'check' : '' }}</span></span>
           <span class="step-text">اختيار المستلمين</span>
         </div>
         <div class="step" :class="{active: step === 2, completed: step > 2}" @click="step = Math.max(step, selectedCount > 0 ? 2 : 1)">
-          <span class="step-num"><i :class="step > 2 ? 'fas fa-check' : '2'"></i></span>
+          <span class="step-num"><span class="material-symbols-rounded">{{ step > 2 ? 'check' : '' }}</span></span>
           <span class="step-text">قالب الرسالة</span>
         </div>
         <div class="step" :class="{active: step === 3, completed: step > 3}" @click="step = Math.max(step, selectedCount > 0 ? 3 : 1)">
-          <span class="step-num"><i :class="step > 3 ? 'fas fa-check' : '3'"></i></span>
+          <span class="step-num"><span class="material-symbols-rounded">{{ step > 3 ? 'check' : '' }}</span></span>
           <span class="step-text">المعاينة</span>
         </div>
         <div class="step" :class="{active: step === 4}" @click="step = Math.max(step, selectedCount > 0 ? 4 : 1)">
-          <span class="step-num"><i class="fas fa-paper-plane"></i></span>
+          <span class="step-num"><span class="material-symbols-rounded">send</span></span>
           <span class="step-text">الإرسال</span>
         </div>
       </div>
@@ -122,14 +122,14 @@ GM.registerView('messages', {
             </div>
           </div>
           <div v-if="candidateList.length === 0" class="empty-state" style="padding:1.5rem">
-            <i class="fas fa-users"></i>
+            <span class="material-symbols-rounded">group</span>
             <p>لا يوجد مشتركين مطابقين للفلترة</p>
           </div>
         </div>
 
         <div class="step-actions">
           <button class="btn btn-primary" :disabled="selectedCount === 0" @click="step = 2">
-            التالي <i class="fas fa-arrow-left"></i>
+            التالي <span class="material-symbols-rounded">arrow_back</span>
           </button>
         </div>
       </div>
@@ -138,41 +138,41 @@ GM.registerView('messages', {
       <div class="step-content" v-if="step === 2">
         <div class="card" style="margin-bottom:1rem">
           <div class="card-header">
-            <h3><i class="fas fa-envelope"></i> قوالب الرسائل</h3>
+            <h3><span class="material-symbols-rounded">mail</span> قوالب الرسائل</h3>
             <span v-if="templates.length === 0" style="font-size:.8rem;color:var(--text-light)">لا توجد قوالب</span>
           </div>
           <div style="display:flex;flex-direction:column;gap:.5rem">
             <div v-for="t in templates" :key="t.id" class="template-card" :class="{active: selectedTemplateId === t.id}" @click="selectedTemplateId = t.id">
               <div class="template-title">
-                <i class="fas fa-message"></i> {{ t.title }}
+                <span class="material-symbols-rounded">message</span> {{ t.title }}
               </div>
               <div class="template-body" style="white-space:pre-wrap">{{ t.body }}</div>
               <div v-if="can('messages_templates')" class="template-actions">
-                <button class="btn btn-info btn-xs" @click.stop="editTemplate(t)"><i class="fas fa-edit"></i></button>
-                <button class="btn btn-danger btn-xs" @click.stop="deleteTemplate(t)"><i class="fas fa-trash"></i></button>
+                <button class="btn btn-info btn-xs" @click.stop="editTemplate(t)"><span class="material-symbols-rounded">edit</span></button>
+                <button class="btn btn-danger btn-xs" @click.stop="deleteTemplate(t)"><span class="material-symbols-rounded">delete</span></button>
               </div>
             </div>
           </div>
           <button v-if="can('messages_templates') && templates.length > 0" class="btn btn-ghost btn-sm" @click="openTemplateModal" style="margin-top:.75rem;width:100%">
-            <i class="fas fa-plus"></i> اضافة قالب جديد
+            <span class="material-symbols-rounded">add</span> اضافة قالب جديد
           </button>
         </div>
 
         <!-- معاينة القالب -->
         <div class="card" v-if="selectedTemplate">
           <div class="card-header">
-            <h3><i class="fas fa-eye"></i> معاينة القالب</h3>
+            <h3><span class="material-symbols-rounded">visibility</span> معاينة القالب</h3>
           </div>
           <div style="background:var(--bg);padding:.85rem;border-radius:var(--radius-sm);white-space:pre-wrap;font-size:.85rem;line-height:1.7" v-html="previewText"></div>
           <div style="margin-top:.5rem;font-size:.75rem;color:var(--text-light)">
-            <i class="fas fa-info-circle"></i> سيتم استبدال {name} باسم المشترك و {month} باسم الشهر و {amount} بالمبلغ
+            <span class="material-symbols-rounded">info</span> سيتم استبدال {name} باسم المشترك و {month} باسم الشهر و {amount} بالمبلغ
           </div>
         </div>
 
         <div class="step-actions">
-          <button class="btn btn-ghost" @click="step = 1"><i class="fas fa-arrow-right"></i> السابق</button>
+          <button class="btn btn-ghost" @click="step = 1"><span class="material-symbols-rounded">arrow_forward</span> السابق</button>
           <button class="btn btn-primary" :disabled="!selectedTemplate || selectedCount === 0" @click="step = 3">
-            التالي <i class="fas fa-arrow-left"></i>
+            التالي <span class="material-symbols-rounded">arrow_back</span>
           </button>
         </div>
       </div>
@@ -181,7 +181,7 @@ GM.registerView('messages', {
       <div class="step-content" v-if="step === 3">
         <div class="card" style="margin-bottom:1rem">
           <div class="card-header">
-            <h3><i class="fas fa-list"></i> ملخص الإرسال</h3>
+            <h3><span class="material-symbols-rounded">list</span> ملخص الإرسال</h3>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.85rem">
             <div style="padding:.5rem;background:var(--bg);border-radius:var(--radius-xs)">
@@ -206,7 +206,7 @@ GM.registerView('messages', {
         <!-- قائمة المستلمين النهائية -->
         <div class="card" style="padding:0;overflow:hidden">
           <div class="card-header" style="padding:.6rem .85rem;margin:0">
-            <h3 style="font-size:.9rem"><i class="fas fa-users"></i> المستلمون ({{ selectedCount }})</h3>
+            <h3 style="font-size:.9rem"><span class="material-symbols-rounded">group</span> المستلمون ({{ selectedCount }})</h3>
           </div>
           <div class="table-wrap" style="border:none">
             <table>
@@ -220,7 +220,7 @@ GM.registerView('messages', {
                   <td>{{ formatMoney(item.total) }}</td>
                   <td>
                     <button class="btn btn-info btn-xs" @click="previewForSub(item)" title="معاينة الرسالة لهذا المشترك">
-                      <i class="fas fa-eye"></i>
+                      <span class="material-symbols-rounded">visibility</span>
                     </button>
                   </td>
                 </tr>
@@ -230,9 +230,9 @@ GM.registerView('messages', {
         </div>
 
         <div class="step-actions">
-          <button class="btn btn-ghost" @click="step = 2"><i class="fas fa-arrow-right"></i> السابق</button>
+          <button class="btn btn-ghost" @click="step = 2"><span class="material-symbols-rounded">arrow_forward</span> السابق</button>
           <button class="btn btn-primary" @click="step = 4" :disabled="selectedCount === 0">
-            الارسال <i class="fas fa-arrow-left"></i>
+            الارسال <span class="material-symbols-rounded">arrow_back</span>
           </button>
         </div>
       </div>
@@ -241,7 +241,7 @@ GM.registerView('messages', {
       <div class="step-content" v-if="step === 4">
         <div class="card" style="text-align:center;padding:2rem">
           <div style="font-size:3rem;margin-bottom:.5rem">
-            <i class="fab fa-whatsapp" style="color:#25D366"></i>
+            <span class="material-symbols-rounded" style="color:#25D366">chat</span>
           </div>
           <h3 style="font-size:1.1rem;margin-bottom:.25rem">جاهز للإرسال!</h3>
           <p style="color:var(--text-secondary);font-size:.85rem;margin-bottom:1.5rem">
@@ -249,21 +249,21 @@ GM.registerView('messages', {
           </p>
           <div style="display:flex;gap:.5rem;justify-content:center;flex-wrap:wrap">
             <button class="btn btn-whatsapp btn-lg" @click="sendAll">
-              <i class="fab fa-whatsapp"></i> إرسال الكل عبر واتساب
+              <span class="material-symbols-rounded">chat</span> إرسال الكل عبر واتساب
             </button>
             <button class="btn btn-primary btn-lg" @click="copyAllMessages">
-              <i class="fas fa-copy"></i> نسخ جميع الرسائل
+              <span class="material-symbols-rounded">content_copy</span> نسخ جميع الرسائل
             </button>
           </div>
           <div style="margin-top:1rem;font-size:.8rem;color:var(--text-light)">
-            <i class="fas fa-info-circle"></i> سيتم فتح واتساب لكل مشترك في نافذة جديدة
+            <span class="material-symbols-rounded">info</span> سيتم فتح واتساب لكل مشترك في نافذة جديدة
           </div>
         </div>
 
         <!-- قائمة الإرسال -->
         <div class="card" style="margin-top:1rem;padding:0;overflow:hidden">
           <div class="card-header" style="padding:.6rem .85rem;margin:0">
-            <h3 style="font-size:.9rem"><i class="fas fa-list"></i> قائمة الإرسال</h3>
+            <h3 style="font-size:.9rem"><span class="material-symbols-rounded">list</span> قائمة الإرسال</h3>
           </div>
           <div class="table-wrap" style="border:none">
             <table>
@@ -276,12 +276,12 @@ GM.registerView('messages', {
                   <td>{{ formatMoney(item.total) }}</td>
                   <td>
                     <button class="btn btn-whatsapp btn-xs" @click="sendOne(item)" title="ارسال">
-                      <i class="fab fa-whatsapp"></i>
+                      <span class="material-symbols-rounded">chat</span>
                     </button>
                   </td>
                   <td>
                     <button class="btn btn-info btn-xs" @click="copyOne(item)" title="نسخ">
-                      <i class="fas fa-copy"></i>
+                      <span class="material-symbols-rounded">content_copy</span>
                     </button>
                   </td>
                 </tr>
@@ -291,8 +291,8 @@ GM.registerView('messages', {
         </div>
 
         <div class="step-actions">
-          <button class="btn btn-ghost" @click="step = 3"><i class="fas fa-arrow-right"></i> السابق</button>
-          <button class="btn btn-ghost" @click="resetWizard"><i class="fas fa-redo"></i> بدء جديد</button>
+          <button class="btn btn-ghost" @click="step = 3"><span class="material-symbols-rounded">arrow_forward</span> السابق</button>
+          <button class="btn btn-ghost" @click="resetWizard"><span class="material-symbols-rounded">refresh</span> بدء جديد</button>
         </div>
       </div>
 
@@ -300,8 +300,8 @@ GM.registerView('messages', {
       <div class="modal-overlay" v-if="showTemplateModal" @click.self="showTemplateModal = false">
         <div class="modal">
           <div class="modal-header">
-            <h3><i class="fas fa-envelope"></i> {{ templateModalMode === 'add' ? 'قالب جديد' : 'تعديل القالب' }}</h3>
-            <button class="modal-close" @click="showTemplateModal = false"><i class="fas fa-times"></i></button>
+            <h3><span class="material-symbols-rounded">mail</span> {{ templateModalMode === 'add' ? 'قالب جديد' : 'تعديل القالب' }}</h3>
+            <button class="modal-close" @click="showTemplateModal = false"><span class="material-symbols-rounded">close</span></button>
           </div>
           <div class="modal-body">
             <div class="form-group">
@@ -322,7 +322,7 @@ GM.registerView('messages', {
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-primary" @click="saveTemplate"><i class="fas fa-save"></i> حفظ</button>
+            <button class="btn btn-primary" @click="saveTemplate"><span class="material-symbols-rounded">save</span> حفظ</button>
             <button class="btn btn-ghost" @click="showTemplateModal = false">الغاء</button>
           </div>
         </div>
@@ -332,8 +332,8 @@ GM.registerView('messages', {
       <div class="modal-overlay" v-if="showPreview" @click.self="showPreview = false">
         <div class="modal modal-sm">
           <div class="modal-header">
-            <h3><i class="fas fa-eye"></i> معاينة الرسالة</h3>
-            <button class="modal-close" @click="showPreview = false"><i class="fas fa-times"></i></button>
+            <h3><span class="material-symbols-rounded">visibility</span> معاينة الرسالة</h3>
+            <button class="modal-close" @click="showPreview = false"><span class="material-symbols-rounded">close</span></button>
           </div>
           <div class="modal-body">
             <div style="margin-bottom:.5rem">
@@ -343,7 +343,7 @@ GM.registerView('messages', {
             <div style="background:var(--bg);padding:.85rem;border-radius:var(--radius-sm);white-space:pre-wrap;font-size:.85rem;line-height:1.7" v-html="previewSubText"></div>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-whatsapp" @click="sendOne(previewSub)" v-if="previewSub"><i class="fab fa-whatsapp"></i> إرسال</button>
+            <button class="btn btn-whatsapp" @click="sendOne(previewSub)" v-if="previewSub"><span class="material-symbols-rounded">chat</span> إرسال</button>
             <button class="btn btn-ghost" @click="showPreview = false">اغلاق</button>
           </div>
         </div>

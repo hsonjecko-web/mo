@@ -1,4 +1,4 @@
-/* ===========================================
+﻿/* ===========================================
    dashboard.js - صفحة لوحة التحكم
    ===========================================
    تعرض:
@@ -13,15 +13,15 @@ GM.registerView('dashboard', {
       <!-- عنوان الصفحة -->
       <div class="page-header">
         <div>
-          <h2><i class="fas fa-chart-pie"></i> لوحة التحكم</h2>
+          <h2><span class="material-symbols-rounded">monitoring</span> لوحة التحكم</h2>
           <div class="subtitle">نظرة عامة على النظام</div>
         </div>
         <div class="page-actions">
           <button v-if="can('billing_view')" class="btn btn-primary" @click="nav('billing')">
-            <i class="fas fa-file-invoice-dollar"></i> الفوترة
+            <span class="material-symbols-rounded">receipt_long</span> الفوترة
           </button>
           <button v-if="can('messages_view')" class="btn btn-whatsapp" @click="nav('messages')">
-            <i class="fab fa-whatsapp"></i> إرسال رسائل
+            <span class="material-symbols-rounded">chat</span> إرسال رسائل
           </button>
         </div>
       </div>
@@ -30,43 +30,38 @@ GM.registerView('dashboard', {
       <div class="stats-grid">
         <!-- كرت المبلغ المستحق -->
         <div class="stat-card gradient-blue animate-fade" style="animation-delay:0s">
-          <i class="fas fa-file-invoice-dollar stat-icon"></i>
           <div class="stat-label">المبلغ المستحق ({{ monthName(m) }})</div>
           <div class="stat-value">{{ formatMoney(expectedTotal) }}</div>
           <div class="stat-sub">اجمالي الفواتير لهذا الشهر</div>
-          <div class="stat-trend"><i class="fas fa-calculator"></i> سعر الامبير {{ formatMoney(pricePerAmp) }}</div>
+          <div class="stat-trend"><span class="material-symbols-rounded">calculate</span> سعر الامبير {{ formatMoney(pricePerAmp) }}</div>
         </div>
 
         <!-- كرت المحصل الوارد -->
         <div class="stat-card gradient-green animate-fade" style="animation-delay:.05s">
-          <i class="fas fa-hand-holding-usd stat-icon"></i>
           <div class="stat-label">المحصل الوارد ({{ monthName(m) }})</div>
           <div class="stat-value">{{ formatMoney(collectedTotal) }}</div>
           <div class="stat-sub">من اصل {{ formatMoney(expectedTotal) }} د.ع</div>
-          <div class="stat-trend"><i class="fas fa-percentage"></i> {{ collectionRate }}%</div>
+          <div class="stat-trend"><span class="material-symbols-rounded">percent</span> {{ collectionRate }}%</div>
         </div>
 
         <!-- كرت الديون المتراكمة -->
         <div class="stat-card gradient-red animate-fade" style="animation-delay:.1s">
-          <i class="fas fa-exclamation-triangle stat-icon"></i>
           <div class="stat-label">إجمالي الديون</div>
           <div class="stat-value">{{ formatMoney(debtTotal) }}</div>
           <div class="stat-sub">عبر جميع الأشهر</div>
-          <div class="stat-trend"><i class="fas fa-clock"></i> {{ unpaidCount }} مشترك متاخر</div>
+          <div class="stat-trend"><span class="material-symbols-rounded">schedule</span> {{ unpaidCount }} مشترك متاخر</div>
         </div>
 
         <!-- كرت المتاخرين -->
         <div class="stat-card gradient-amber animate-fade" style="animation-delay:.15s">
-          <i class="fas fa-user-clock stat-icon"></i>
           <div class="stat-label">المتاخرين بالدفع</div>
           <div class="stat-value">{{ unpaidCount }}</div>
           <div class="stat-sub">من اصل {{ subscribersCount }} مشترك</div>
-          <div class="stat-trend"><i class="fas fa-arrow-down"></i> {{ paidCount }} مسدد</div>
+          <div class="stat-trend"><span class="material-symbols-rounded">arrow_downward</span> {{ paidCount }} مسدد</div>
         </div>
 
         <!-- كرت اجمالي المشتركين -->
         <div class="stat-card gradient-purple animate-fade" style="animation-delay:.2s">
-          <i class="fas fa-users stat-icon"></i>
           <div class="stat-label">إجمالي المشتركين</div>
           <div class="stat-value">{{ subscribersCount }}</div>
           <div class="stat-sub">{{ areasCount }} منطقة | {{ boardsCount }} بورد | {{ generatorsCount }} مولد</div>
@@ -74,11 +69,10 @@ GM.registerView('dashboard', {
 
         <!-- كرت مصروفات الشهر -->
         <div class="stat-card gradient-rose animate-fade" style="animation-delay:.25s">
-          <i class="fas fa-shopping-cart stat-icon"></i>
           <div class="stat-label">مصروفات ({{ monthName(m) }})</div>
           <div class="stat-value">{{ formatMoney(monthlyExpenses) }}</div>
           <div class="stat-sub">{{ expensesCount }} عملية صرف</div>
-          <div class="stat-trend"><i class="fas fa-balance-scale"></i> صافي {{ formatMoney(netProfit) }}</div>
+          <div class="stat-trend"><span class="material-symbols-rounded">balance</span> صافي {{ formatMoney(netProfit) }}</div>
         </div>
       </div>
 
@@ -86,7 +80,7 @@ GM.registerView('dashboard', {
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:1.5rem">
         <div class="card">
           <div class="card-header">
-            <h3><i class="fas fa-chart-bar"></i> الملخص الشهري</h3>
+            <h3><span class="material-symbols-rounded">bar_chart</span> الملخص الشهري</h3>
           </div>
           <div style="display:flex;flex-wrap:wrap;gap:.5rem;padding:.25rem 0">
             <div style="flex:1;min-width:100px;text-align:center;padding:.5rem;background:var(--bg);border-radius:var(--radius-sm)">
@@ -109,7 +103,7 @@ GM.registerView('dashboard', {
         </div>
         <div class="card">
           <div class="card-header">
-            <h3><i class="fas fa-clock"></i> اخر المشتركين</h3>
+            <h3><span class="material-symbols-rounded">schedule</span> اخر المشتركين</h3>
           </div>
           <div style="display:flex;flex-direction:column;gap:.35rem">
             <div v-if="recentSubs.length === 0" class="empty-state" style="padding:1rem">
