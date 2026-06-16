@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>نظام إدارة مشتركي المولدات</title>
+
+  <!-- الخطوط (Google Fonts) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800&display=swap" rel="stylesheet">
+
+  <!-- أيقونات Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- فيو 3 -->
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js">
+  </script>
+
+  <!-- ملف الأنماط -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <div id="app">
+    <!-- ====================================================== -->
+    <!-- شاشة تسجيل الدخول                                       -->
+    <!-- ====================================================== -->
+    <div class="login-screen" v-if="!loggedIn">
+      <div class="login-box">
+        <div class="login-logo">
+          <div class="login-icon"><i class="fas fa-bolt"></i></div>
+          <h2>نظام إدارة المولدات</h2>
+          <p>تسجيل الدخول إلى النظام</p>
+        </div>
+
+        <!-- رسالة الخطأ -->
+        <div v-if="loginError" style="background:var(--danger-light);color:var(--danger);padding:.5rem .75rem;border-radius:var(--radius-xs);font-size:.8rem;font-weight:600;margin-bottom:1rem;text-align:center">
+          <i class="fas fa-exclamation-circle"></i> {{ loginError }}
+        </div>
+
+        <!-- نموذج تسجيل الدخول -->
+        <div class="form-group">
+          <label class="form-label">اسم المستخدم</label>
+          <input v-model="loginForm.username" class="form-input" placeholder="admin" dir="ltr" @keyup.enter="doLogin" autocomplete="username">
+        </div>
+        <div class="form-group">
+          <label class="form-label">كلمة المرور</label>
+          <input type="password" v-model="loginForm.password" class="form-input" placeholder="••••••••" dir="ltr" @keyup.enter="doLogin" autocomplete="current-password">
+        </div>
+        <button class="btn btn-primary btn-lg btn-block" @click="doLogin" style="margin-top:.5rem">
+          <i class="fas fa-sign-in-alt"></i> تسجيل الدخول
+        </button>
+
+        <div style="text-align:center;margin-top:1rem;font-size:.75rem;color:var(--text-light)">
+          <i class="fas fa-info-circle"></i>
+          الحساب الافتراضي: admin / admin123
+        </div>
+      </div>
+    </div>
+
+    <!-- ====================================================== -->
+    <!-- التطبيق الرئيسي (بعد تسجيل الدخول)                     -->
+    <!-- ====================================================== -->
+    <template v-if="loggedIn">
+      <div class="app-wrapper">
+        <!-- تغطية السايدبار (للموبايل) -->
+        <div class="sidebar-overlay" :class="{active: sidebarOpen}" @click="sidebarOpen = false"></div>
+
+        <!-- السايدبار -->
+        <app-sidebar
+          :open="sidebarOpen"
+          :active-view="currentView"
+          :late-count="lateCount"
+          @navigate="navigate"
+          @close="sidebarOpen = false"
+        ></app-sidebar>
+
+        <!-- المحتوى الرئيسي -->
+        <div class="main-content">
+          <!-- الهدر -->
+          <app-header
+            :theme="theme"
+            :user="currentUser"
+            @toggle-sidebar="sidebarOpen = !sidebarOpen"
+            @toggle-theme="toggleTheme"
+            @logout="doLogout"
+            @navigate="navigate"
+          ></app-header>
+
+          <!-- المحتوى الداخلي -->
+          <div class="main-inner">
+            <!-- dashboard -->
+            <dashboard-view v-if="currentView === 'dashboard'" @navigate="navigate" @toast="showToast"></dashboard-view>
+
+            <!-- subscribers -->
+            <subscribers-view v-if="currentView === 'subscribers'" @navigate="navigate" @toast="showToast"></subscribers-view>
+
+            <!-- billing -->
+            <billing-view v-if="currentView === 'billing'" @navigate="navigate" @toast="showToast"></billing-view>
+
+            <!-- messages -->
+            <messages-view v-if="currentView === 'messages'" @navigate="navigate" @toast="showToast"></messages-view>
+
+            <!-- expenses -->
+            <expenses-view v-if="currentView === 'expenses'" @navigate="navigate" @toast="showToast"></expenses-view>
+
+            <!-- archive -->
+            <archive-view v-if="currentView === 'archive'" @navigate="navigate" @toast="showToast"></archive-view>
+
+            <!-- settings -->
+            <settings-view v-if="currentView === 'settings'" @navigate="navigate" @toast="showToast"></settings-view>
+
+            <!-- users -->
+            <users-view v-if="currentView === 'users'" @navigate="navigate" @toast="showToast"></users-view>
+
+            <!-- quickpay -->
+            <quickpay-view v-if="currentView === 'quickpay'" @navigate="navigate" @toast="showToast"></quickpay-view>
+
+            <!-- صفحة غير موجودة -->
+            <div v-if="currentView === 'notfound'" class="empty-state" style="padding:3rem">
+              <i class="fas fa-exclamation-triangle" style="color:var(--warning)"></i>
+              <p>الصفحة غير موجودة</p>
+            </div>
+          </div>
+
+          <!-- الفوتر -->
+          <app-footer
+            :active-view="currentView"
+            @navigate="navigate"
+          ></app-footer>
+        </div>
+      </div>
+
+      <!-- الإشعارات -->
+      <div class="toast-container" v-if="toast">
+        <div class="toast" :class="toast.type" @click="toast = null">
+          <i :class="toast.icon"></i>
+          <span>{{ toast.message }}</span>
+        </div>
+      </div>
+    </template>
+  </div>
+
+  <!-- ====================================================== -->
+  <!-- تحميل ملفات JS بالترتيب الصحيح                        -->
+  <!-- ====================================================== -->
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/components/header.js"></script>
+  <script src="js/components/sidebar.js"></script>
+  <script src="js/components/footer.js"></script>
+  <script src="js/views/dashboard.js"></script>
+  <script src="js/views/subscribers.js"></script>
+  <script src="js/views/billing.js"></script>
+  <script src="js/views/messages.js"></script>
+  <script src="js/views/expenses.js"></script>
+  <script src="js/views/archive.js"></script>
+  <script src="js/views/settings.js"></script>
+  <script src="js/views/users.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
