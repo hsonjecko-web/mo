@@ -43,15 +43,13 @@ GM.registerView('quickpay', {
         </div>
       </div>
 
-      <!-- نتائج البحث -->
-      <div v-if="searchQuery.trim()">
-        <div v-if="searchResults.length === 0" class="card">
-          <div class="empty-state" style="padding:1.5rem">
-            <i class="fas fa-search"></i>
-            <p>لا توجد نتائج للبحث</p>
-          </div>
+      <!-- نتائج البحث / قائمة المشتركين -->
+      <div v-if="displayList.length > 0">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.5rem;font-size:.78rem;color:var(--text-light)">
+          <span><i class="fas fa-users"></i> {{ displayList.length }} مشترك</span>
+          <span v-if="searchQuery.trim()" class="badge badge-info"><i class="fas fa-filter"></i> تصفية نشطة</span>
         </div>
-        <div v-for="sub in searchResults" :key="sub.id" class="card" style="margin-bottom:.75rem;padding:0;overflow:hidden">
+        <div v-for="(sub, i) in displayList" :key="sub.id" class="card animate-fade" :style="{'margin-bottom':'.65rem','padding':'0','overflow':'hidden','animation-delay':(0.02 * i)+'s'}">
           <div style="padding:1rem 1rem .75rem;border-bottom:1px solid var(--border)">
             <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem">
               <div>
@@ -101,12 +99,11 @@ GM.registerView('quickpay', {
         </div>
       </div>
 
-      <!-- رسالة عند عدم وجود بحث -->
-          <div v-if="!searchQuery.trim()" class="card">
+      <!-- رسالة عدم وجود نتائج -->
+      <div v-if="displayList.length === 0" class="card">
         <div class="empty-state" style="padding:2rem">
-          <i class="fas fa-search" style="font-size:3.5rem"></i>
-          <p>ابحث عن المشترك باستخدام الاسم او رقم الهاتف</p>
-          <p class="sub-text">ثم قم بتسديد الفاتورة بضغطة زر</p>
+          <i class="fas fa-search" style="font-size:3rem"></i>
+          <p>{{ subscribers.length === 0 ? 'لا يوجد مشتركين في النظام' : 'لا توجد نتائج للبحث' }}</p>
         </div>
       </div>
 
@@ -179,18 +176,22 @@ GM.registerView('quickpay', {
   },
   computed: {
     store() { return GM.store; },
+    subscribers() { return this.store.subscribers; },
     yearList() {
       const y = []; const cy = new Date().getFullYear();
       for (let i = cy - 3; i <= cy + 2; i++) y.push(i);
       return y;
     },
     pricePerAmp() { return this.store.getPricePerAmp(this.payMonth, this.payYear); },
-    searchResults() {
+    displayList() {
       const q = this.searchQuery.trim().toLowerCase();
-      if (!q) return [];
-      return this.store.subscribers.filter(s =>
-        s.name.toLowerCase().includes(q) || s.phone.includes(q)
-      ).slice(0, 10);
+      let list = this.store.subscribers;
+      if (q) {
+        list = list.filter(s =>
+          s.name.toLowerCase().includes(q) || s.phone.includes(q)
+        );
+      }
+      return list.slice(0, 50);
     }
   },
   mounted() {

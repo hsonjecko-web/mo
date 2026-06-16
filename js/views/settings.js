@@ -20,24 +20,24 @@ GM.registerView('settings', {
         </div>
       </div>
 
-      <!-- علامات التبويب -->
-      <div class="tabs">
-        <div v-if="can('settings_areas')" class="tab" :class="{active: tab === 'areas'}" @click="tab = 'areas'">
+      <!-- علامات التبويب العمودية -->
+      <div class="v-tabs">
+        <div v-if="can('settings_areas')" class="v-tab" :class="{active: tab === 'areas'}" @click="tab = 'areas'">
           <i class="fas fa-map-marker-alt"></i> المناطق
         </div>
-        <div v-if="can('settings_boards')" class="tab" :class="{active: tab === 'boards'}" @click="tab = 'boards'">
+        <div v-if="can('settings_boards')" class="v-tab" :class="{active: tab === 'boards'}" @click="tab = 'boards'">
           <i class="fas fa-layer-group"></i> البوردات
         </div>
-        <div v-if="can('settings_generators')" class="tab" :class="{active: tab === 'generators'}" @click="tab = 'generators'">
+        <div v-if="can('settings_generators')" class="v-tab" :class="{active: tab === 'generators'}" @click="tab = 'generators'">
           <i class="fas fa-industry"></i> المولدات
         </div>
-        <div v-if="can('settings_categories')" class="tab" :class="{active: tab === 'categories'}" @click="tab = 'categories'">
+        <div v-if="can('settings_categories')" class="v-tab" :class="{active: tab === 'categories'}" @click="tab = 'categories'">
           <i class="fas fa-tags"></i> أصناف المصروفات
         </div>
-        <div class="tab" :class="{active: tab === 'templates'}" @click="tab = 'templates'">
+        <div class="v-tab" :class="{active: tab === 'templates'}" @click="tab = 'templates'">
           <i class="fas fa-envelope"></i> قوالب الرسائل
         </div>
-        <div class="tab" :class="{active: tab === 'general'}" @click="tab = 'general'">
+        <div class="v-tab" :class="{active: tab === 'general'}" @click="tab = 'general'">
           <i class="fas fa-sliders-h"></i> عام
         </div>
       </div>

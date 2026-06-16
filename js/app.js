@@ -50,6 +50,9 @@
       theme(v) {
         document.documentElement.className = v === 'dark' ? 'dark' : '';
         localStorage.setItem('gm_theme', v);
+      },
+      sidebarOpen(v) {
+        document.body.style.overflow = v ? 'hidden' : '';
       }
     },
     methods: {

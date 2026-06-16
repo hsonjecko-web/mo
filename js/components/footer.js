@@ -21,14 +21,7 @@ GM.registerComponent('app-footer', {
             <i class="fas fa-users"></i>
             <span>المشتركين</span>
           </button>
-          <button v-if="can('billing_view')" class="footer-btn" :class="{active: activeView === 'billing'}" @click="nav('billing')">
-            <i class="fas fa-file-invoice-dollar"></i>
-            <span>الفوترة</span>
-          </button>
-          <button v-if="can('messages_view')" class="footer-btn" :class="{active: activeView === 'messages'}" @click="nav('messages')">
-            <i class="fab fa-whatsapp"></i>
-            <span>الرسائل</span>
-          </button>
+
           <button class="footer-btn" :class="{active: activeView === 'quickpay'}" @click="nav('quickpay')">
             <i class="fas fa-hand-holding-usd"></i>
             <span>دفع سريع</span>
