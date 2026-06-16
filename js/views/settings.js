@@ -46,32 +46,30 @@ GM.registerView('settings', {
       <div v-if="tab === 'areas'">
         <div class="card">
           <div class="card-header">
-            <h3><i class="fas fa-map-marker-alt"></i> المناطق</h3>
+            <h3><i class="fas fa-map-marker-alt"></i> المناطق <span class="badge badge-primary">{{ areas.length }}</span></h3>
             <button class="btn btn-primary btn-sm" @click="openAreaModal">
-              <i class="fas fa-plus"></i> اضافة منطقة
+              <i class="fas fa-plus"></i> اضافة
             </button>
           </div>
-          <div class="table-wrap">
-            <table v-if="areas.length > 0">
-              <thead><tr><th>#</th><th>اسم المنطقة</th><th>البوردات</th><th>المشتركين</th><th>تاريخ الاضافة</th><th>الاجراءات</th></tr></thead>
-              <tbody>
-                <tr v-for="(a, i) in areas" :key="a.id">
-                  <td>{{ i + 1 }}</td>
-                  <td><strong>{{ a.name }}</strong></td>
-                  <td>{{ getBoardsCount(a.id) }}</td>
-                  <td>{{ getSubsCountByArea(a.id) }}</td>
-                  <td style="font-size:.78rem">{{ a.createdAt }}</td>
-                  <td>
-                    <button class="btn btn-info btn-xs" @click="editArea(a)"><i class="fas fa-edit"></i></button>
-                    <button class="btn btn-danger btn-xs" @click="deleteArea(a)"><i class="fas fa-trash"></i></button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div v-else class="empty-state">
-              <i class="fas fa-map-marker-alt"></i>
-              <p>لا توجد مناطق</p>
+          <div v-if="areas.length > 0" class="setting-list">
+            <div v-for="a in areas" :key="a.id" class="setting-card">
+              <div class="sc-icon"><i class="fas fa-map-marker-alt"></i></div>
+              <div class="sc-info">
+                <div class="sc-name">{{ a.name }}</div>
+                <div class="sc-meta">
+                  <span><i class="fas fa-layer-group"></i> {{ getBoardsCount(a.id) }} بورد</span>
+                  <span><i class="fas fa-users"></i> {{ getSubsCountByArea(a.id) }} مشترك</span>
+                </div>
+              </div>
+              <div class="sc-actions">
+                <button class="btn btn-info btn-xs" @click="editBoard(b)" title="تعديل"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-xs" @click="deleteBoard(b)" title="حذف"><i class="fas fa-trash"></i></button>
+              </div>
             </div>
+          </div>
+          <div v-else class="empty-state">
+            <i class="fas fa-map-marker-alt"></i>
+            <p>لا توجد مناطق</p>
           </div>
         </div>
       </div>
@@ -114,34 +112,32 @@ GM.registerView('settings', {
       <div v-if="tab === 'generators'">
         <div class="card">
           <div class="card-header">
-            <h3><i class="fas fa-industry"></i> المولدات</h3>
+            <h3><i class="fas fa-industry"></i> المولدات <span class="badge badge-primary">{{ generators.length }}</span></h3>
             <button class="btn btn-primary btn-sm" @click="openGeneratorModal">
-              <i class="fas fa-plus"></i> اضافة مولد
+              <i class="fas fa-plus"></i> اضافة
             </button>
           </div>
-          <div class="table-wrap">
-            <table v-if="generators.length > 0">
-              <thead><tr><th>#</th><th>اسم المولد</th><th>المنطقة</th><th>صاحب المولد</th><th>رقم المولد</th><th>هاتف المولد</th><th>المشتركين</th><th>الاجراءات</th></tr></thead>
-              <tbody>
-                <tr v-for="(g, i) in generators" :key="g.id">
-                  <td>{{ i + 1 }}</td>
-                  <td><strong>{{ g.name }}</strong></td>
-                  <td>{{ getAreaName(g.areaId) }}</td>
-                  <td>{{ g.owner || '-' }}</td>
-                  <td>{{ g.generatorNumber || '-' }}</td>
-                  <td dir="ltr">{{ g.ownerPhone || '-' }}</td>
-                  <td>{{ getSubsCountByGenerator(g.id) }}</td>
-                  <td>
-                    <button class="btn btn-info btn-xs" @click="editGenerator(g)"><i class="fas fa-edit"></i></button>
-                    <button class="btn btn-danger btn-xs" @click="deleteGenerator(g)"><i class="fas fa-trash"></i></button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div v-else class="empty-state">
-              <i class="fas fa-industry"></i>
-              <p>لا توجد مولدات</p>
+          <div v-if="generators.length > 0" class="setting-list">
+            <div v-for="g in generators" :key="g.id" class="setting-card">
+              <div class="sc-icon"><i class="fas fa-industry"></i></div>
+              <div class="sc-info">
+                <div class="sc-name">{{ g.name }}</div>
+                <div class="sc-meta">
+                  <span><i class="fas fa-map-marker-alt"></i> {{ getAreaName(g.areaId) }}</span>
+                  <span><i class="fas fa-users"></i> {{ getSubsCountByGenerator(g.id) }} مشترك</span>
+                  <span v-if="g.owner"><i class="fas fa-user"></i> {{ g.owner }}</span>
+                  <span v-if="g.ownerPhone" dir="ltr"><i class="fas fa-phone"></i> {{ g.ownerPhone }}</span>
+                </div>
+              </div>
+              <div class="sc-actions">
+                <button class="btn btn-info btn-xs" @click="editGenerator(g)" title="تعديل"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-xs" @click="deleteGenerator(g)" title="حذف"><i class="fas fa-trash"></i></button>
+              </div>
             </div>
+          </div>
+          <div v-else class="empty-state">
+            <i class="fas fa-industry"></i>
+            <p>لا توجد مولدات</p>
           </div>
         </div>
       </div>
@@ -150,30 +146,29 @@ GM.registerView('settings', {
       <div v-if="tab === 'categories'">
         <div class="card">
           <div class="card-header">
-            <h3><i class="fas fa-tags"></i> أصناف المصروفات</h3>
+            <h3><i class="fas fa-tags"></i> أصناف المصروفات <span class="badge badge-primary">{{ categories.length }}</span></h3>
             <button class="btn btn-primary btn-sm" @click="openCategoryModal">
-              <i class="fas fa-plus"></i> اضافة صنف
+              <i class="fas fa-plus"></i> اضافة
             </button>
           </div>
-          <div class="table-wrap">
-            <table v-if="categories.length > 0">
-              <thead><tr><th>#</th><th>اسم الصنف</th><th>تاريخ الاضافة</th><th>الاجراءات</th></tr></thead>
-              <tbody>
-                <tr v-for="(c, i) in categories" :key="c.id">
-                  <td>{{ i + 1 }}</td>
-                  <td><strong>{{ c.name }}</strong></td>
-                  <td style="font-size:.78rem">{{ c.createdAt }}</td>
-                  <td>
-                    <button class="btn btn-danger btn-xs" @click="deleteCategory(c)"><i class="fas fa-trash"></i></button>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <div v-else class="empty-state">
-              <i class="fas fa-tags"></i>
-              <p>لا توجد أصناف مصروفات</p>
-              <p class="sub-text">أضف أصناف مثل: زيت, وقود, صيانة, قطع غيار, رواتب...</p>
+          <div v-if="categories.length > 0" class="setting-list">
+            <div v-for="c in categories" :key="c.id" class="setting-card">
+              <div class="sc-icon"><i class="fas fa-tag"></i></div>
+              <div class="sc-info">
+                <div class="sc-name">{{ c.name }}</div>
+                <div class="sc-meta">
+                  <span><i class="fas fa-calendar"></i> {{ c.createdAt }}</span>
+                </div>
+              </div>
+              <div class="sc-actions">
+                <button class="btn btn-danger btn-xs" @click="deleteCategory(c)" title="حذف"><i class="fas fa-trash"></i></button>
+              </div>
             </div>
+          </div>
+          <div v-else class="empty-state">
+            <i class="fas fa-tags"></i>
+            <p>لا توجد أصناف مصروفات</p>
+            <p class="sub-text">أضف أصناف مثل: زيت, وقود, صيانة, قطع غيار, رواتب...</p>
           </div>
         </div>
       </div>
@@ -247,6 +242,9 @@ GM.registerView('settings', {
             </button>
             <button v-if="can('clear_data')" class="btn btn-danger" @click="clearData">
               <i class="fas fa-trash"></i> مسح كل البيانات
+            </button>
+            <button class="btn btn-ghost-primary" @click="loadSampleData">
+              <i class="fas fa-flask"></i> بيانات تجربة
             </button>
           </div>
           <input type="file" ref="importInput" accept=".json" style="display:none" @change="importData">
@@ -642,6 +640,68 @@ GM.registerView('settings', {
         }
       }
     },
-    showToast(msg, type) { this.$emit('toast', msg, type); }
+    showToast(msg, type) { this.$emit('toast', msg, type); },
+    loadSampleData() {
+      if (!confirm('سيتم اضافة بيانات تجربة (مناطق، بوردات، مولدات، مشتركين)\nمع العلم لن يتم حذف البيانات الحالية')) return;
+      const sample = (function() {
+        const now = new Date();
+        const cy = now.getFullYear();
+        const cm = now.getMonth() + 1;
+        const d = (o) => { const dt = new Date(); dt.setDate(dt.getDate() - o); return dt.toISOString().slice(0,10); };
+        const id = (n) => n;
+        const areas = [
+          { id: id('area_1'), name: 'حي القادسية', createdAt: d(90) },
+          { id: id('area_2'), name: 'حي الاندلس', createdAt: d(85) },
+          { id: id('area_3'), name: 'حي المنصور', createdAt: d(80) },
+        ];
+        const boards = [
+          { id: id('board_1'), name: 'بورد 1', areaId: id('area_1'), createdAt: d(80) },
+          { id: id('board_2'), name: 'بورد 2', areaId: id('area_1'), createdAt: d(75) },
+          { id: id('board_3'), name: 'بورد السلام', areaId: id('area_2'), createdAt: d(70) },
+          { id: id('board_4'), name: 'بورد النور', areaId: id('area_3'), createdAt: d(65) },
+        ];
+        const generators = [
+          { id: id('gen_1'), name: 'مولد القادسية 1', areaId: id('area_1'), owner: 'ابو علي', ownerPhone: '07701234567', generatorNumber: 'G-001', createdAt: d(80) },
+          { id: id('gen_2'), name: 'مولد الاندلس', areaId: id('area_2'), owner: 'الحاج كريم', ownerPhone: '07707654321', generatorNumber: 'G-002', createdAt: d(70) },
+        ];
+        const subs = [
+          { id: id('sub_1'), name: 'علي محمد', phone: '07711223344', address: 'شارع ١', boardId: id('board_1'), generatorId: id('gen_1'), amps: 5, connectionNumber: '1', notes: '', createdAt: d(60), status: 'active' },
+          { id: id('sub_2'), name: 'حسين احمد', phone: '07722334455', address: 'شارع ٢', boardId: id('board_1'), generatorId: id('gen_1'), amps: 10, connectionNumber: '2', notes: '', createdAt: d(55), status: 'active' },
+          { id: id('sub_3'), name: 'عباس كريم', phone: '07733445566', address: 'شارع ٣', boardId: id('board_2'), generatorId: id('gen_1'), amps: 7, connectionNumber: '1', notes: 'صاحب المحل', createdAt: d(50), status: 'active' },
+          { id: id('sub_4'), name: 'محمد رضا', phone: '07744556677', address: 'حي الاندلس', boardId: id('board_3'), generatorId: id('gen_2'), amps: 3, connectionNumber: '1', notes: '', createdAt: d(45), status: 'active' },
+          { id: id('sub_5'), name: 'زهراء حسن', phone: '07755667788', address: 'شارع المنصور', boardId: id('board_4'), generatorId: id('gen_2'), amps: 5, connectionNumber: '1', notes: '', createdAt: d(40), status: 'active' },
+          { id: id('sub_6'), name: 'مصطفى جليل', phone: '07766778899', address: 'شارع ٥', boardId: id('board_2'), generatorId: id('gen_1'), amps: 15, connectionNumber: '2', notes: 'مول تجاري', createdAt: d(35), status: 'active' },
+          { id: id('sub_7'), name: 'حسن علي', phone: '07777889900', address: 'بغداد', boardId: id('board_3'), generatorId: id('gen_2'), amps: 10, connectionNumber: '2', notes: '', createdAt: d(30), status: 'inactive' },
+          { id: id('sub_8'), name: 'نور الهدى', phone: '07788990011', address: 'حي القادسية', boardId: id('board_1'), generatorId: id('gen_1'), amps: 5, connectionNumber: '3', notes: '', createdAt: d(25), status: 'active' },
+        ];
+        const ms = [];
+        for (let i = 0; i < 3; i++) {
+          let m = cm - i; let y = cy;
+          if (m <= 0) { m += 12; y -= 1; }
+          ms.push({ id: id('ms_' + i), month: m, year: y, pricePerAmp: 1500 });
+        }
+        const pays = [];
+        const paid = [id('sub_1'), id('sub_3'), id('sub_5'), id('sub_8')];
+        for (let i = 0; i < 3; i++) {
+          let m = cm - i; let y = cy;
+          if (m <= 0) { m += 12; y -= 1; }
+          for (const sid of paid) pays.push({ id: id('pay_' + sid + '_' + i), subscriberId: sid, month: m, year: y, paid: true, paidAt: d(i * 30 + 5) });
+          pays.push({ id: id('pay_un_' + i), subscriberId: id('sub_2'), month: m, year: y, paid: false, paidAt: null });
+          pays.push({ id: id('pay_un2_' + i), subscriberId: id('sub_6'), month: m, year: y, paid: false, paidAt: null });
+        }
+        return { areas, boards, generators, subscribers: subs, monthlySettings: ms, payments: pays };
+      })();
+      const s = this.store;
+      // Merge without duplicates
+      const exists = (arr, id) => arr.some(x => x.id === id);
+      for (const a of sample.areas) { if (!exists(s.areas, a.id)) s.areas.push(a); }
+      for (const b of sample.boards) { if (!exists(s.boards, b.id)) s.boards.push(b); }
+      for (const g of sample.generators) { if (!exists(s.generators, g.id)) s.generators.push(g); }
+      for (const sub of sample.subscribers) { if (!exists(s.subscribers, sub.id)) s.subscribers.push(sub); }
+      for (const m of sample.monthlySettings) { if (!exists(s.monthlySettings, m.id)) s.monthlySettings.push(m); }
+      for (const p of sample.payments) { if (!exists(s.payments, p.id)) s.payments.push(p); }
+      s._save();
+      this.showToast('تم اضافة بيانات التجربة', 'success');
+    }
   }
 });

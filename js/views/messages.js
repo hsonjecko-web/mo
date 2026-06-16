@@ -549,5 +549,24 @@ GM.registerView('messages', {
     showToast(msg, type) {
       this.$emit('toast', msg, type);
     }
+  },
+  mounted() {
+    if (window.__msgTargetSubId) {
+      const subId = window.__msgTargetSubId;
+      const targetMonth = window.__msgTargetMonth;
+      const targetYear = window.__msgTargetYear;
+      // Clear globals
+      window.__msgTargetSubId = null;
+      window.__msgTargetMonth = null;
+      window.__msgTargetYear = null;
+      // Set filters
+      if (targetMonth) this.filterMonth = targetMonth;
+      if (targetYear) this.filterYear = targetYear;
+      this.filterStatus = '';
+      this.$nextTick(() => {
+        this.selectedIds = [subId];
+        if (this.selectedCount > 0) this.step = 2;
+      });
+    }
   }
 });

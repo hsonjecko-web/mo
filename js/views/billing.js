@@ -1,10 +1,5 @@
 /* ===========================================
    billing.js - صفحة الفوترة الشهرية
-   ===========================================
-   - تحديد سعر الامبير لكل شهر
-   - عرض فواتير جميع المشتركين
-   - تسديد / الغاء تسديد
-   - تصفية حسب الحالة والبورد
    =========================================== */
 
 GM.registerView('billing', {
@@ -17,7 +12,7 @@ GM.registerView('billing', {
         </div>
         <div class="page-actions">
           <button v-if="can('billing_manage') && unpaidItems.length > 0" class="btn btn-success" @click="markAllPaid">
-            <i class="fas fa-check-double"></i> تحديد الكل مدفوع
+            <i class="fas fa-check-double"></i> تسديد الكل
           </button>
         </div>
       </div>
@@ -25,7 +20,7 @@ GM.registerView('billing', {
       <!-- تحكمات الفلترة والشهر -->
       <div class="card" style="margin-bottom:1rem;padding:.85rem 1rem">
         <div class="filter-bar">
-          <div class="form-group" style="min-width:120px">
+          <div class="form-group" style="min-width:110px">
             <div class="form-label">الشهر</div>
             <div class="select-wrap">
               <select v-model.number="month" class="form-input" style="padding-top:.35rem;padding-bottom:.35rem">
@@ -33,7 +28,7 @@ GM.registerView('billing', {
               </select>
             </div>
           </div>
-          <div class="form-group" style="min-width:100px">
+          <div class="form-group" style="min-width:90px">
             <div class="form-label">السنة</div>
             <div class="select-wrap">
               <select v-model.number="year" class="form-input" style="padding-top:.35rem;padding-bottom:.35rem">
@@ -41,16 +36,16 @@ GM.registerView('billing', {
               </select>
             </div>
           </div>
-          <div class="form-group" style="min-width:140px">
-            <div class="form-label">سعر الامبير (د.ع)</div>
+          <div class="form-group" style="min-width:120px">
+            <div class="form-label">السعر / أمبير</div>
             <div style="display:flex;gap:4px">
-              <input type="number" v-model.number="pricePerAmp" class="form-input" style="padding-top:.35rem;padding-bottom:.35rem;flex:1" placeholder="سعر الامبير">
+              <input type="number" v-model.number="pricePerAmp" class="form-input" style="padding-top:.35rem;padding-bottom:.35rem;flex:1" placeholder="السعر">
               <button v-if="can('billing_set_price')" class="btn btn-primary btn-sm" @click="savePrice" style="padding:.35rem .5rem;font-size:.75rem" :title="priceSaved ? 'تم الحفظ' : 'حفظ'">
                 <i :class="priceSaved ? 'fas fa-check' : 'fas fa-save'"></i>
               </button>
             </div>
           </div>
-          <div class="form-group" style="min-width:120px">
+          <div class="form-group" style="min-width:100px">
             <div class="form-label">الحالة</div>
             <div class="select-wrap">
               <select v-model="filterPaid" class="form-input" style="padding-top:.35rem;padding-bottom:.35rem">
@@ -60,11 +55,11 @@ GM.registerView('billing', {
               </select>
             </div>
           </div>
-          <div class="form-group" style="min-width:120px">
+          <div class="form-group" style="min-width:100px">
             <div class="form-label">البورد</div>
             <div class="select-wrap">
               <select v-model="filterBoard" class="form-input" style="padding-top:.35rem;padding-bottom:.35rem">
-                <option value="">كل البوردات</option>
+                <option value="">الكل</option>
                 <option v-for="b in boards" :key="b.id" :value="b.id">{{ b.name }}</option>
               </select>
             </div>
@@ -72,60 +67,41 @@ GM.registerView('billing', {
         </div>
       </div>
 
-      <!-- جدول الفواتير -->
-      <div class="card" style="padding:0;overflow:hidden">
-        <div class="card-header" style="padding:.85rem 1rem;margin:0">
-          <h3><i class="fas fa-calculator"></i> فاتورة شهر {{ monthName(month) }} {{ year }}</h3>
-          <div style="display:flex;align-items:center;gap:.75rem;font-size:.78rem;flex-wrap:wrap">
-            <span style="color:var(--success)"><i class="fas fa-check-circle"></i> المدفوع: {{ paidCount }}</span>
-            <span style="color:var(--danger)"><i class="fas fa-times-circle"></i> غير المدفوع: {{ unpaidItems.length }}</span>
-            <span style="color:var(--primary)"><i class="fas fa-money-bill"></i> الاجمالي: {{ formatMoney(totalAmount) }}</span>
-            <span style="color:var(--success)"><i class="fas fa-hand-holding-usd"></i> المحصل: {{ formatMoney(collectedAmount) }}</span>
+      <!-- ملخص -->
+      <div class="billing-summary">
+        <span class="bs-item" style="color:var(--success)"><i class="fas fa-check-circle"></i> المدفوع: <strong>{{ paidCount }}</strong></span>
+        <span class="bs-item" style="color:var(--danger)"><i class="fas fa-times-circle"></i> غير المدفوع: <strong>{{ unpaidItems.length }}</strong></span>
+        <span class="bs-item" style="color:var(--primary)"><i class="fas fa-calculator"></i> الاجمالي: <strong>{{ formatMoney(totalAmount) }}</strong></span>
+        <span class="bs-item" style="color:var(--success)"><i class="fas fa-hand-holding-usd"></i> المحصل: <strong>{{ formatMoney(collectedAmount) }}</strong></span>
+      </div>
+
+      <!-- قائمة الفواتير -->
+      <div v-if="billingList.length > 0" class="sub-list">
+        <div v-for="item in billingList" :key="item.subscriberId" class="sub-card" :style="item.paid ? {borderColor:'var(--success)',background:'var(--success-light)',opacity:.85} : {}">
+          <div class="sub-bar" :style="{background: item.paid ? 'var(--success)' : 'var(--danger)'}"></div>
+          <div class="sub-info">
+            <div class="sub-name">
+              {{ item.name }}
+              <span v-if="item.paid" class="badge badge-success">مدفوع</span>
+              <span v-else class="badge badge-danger">غير مدفوع</span>
+            </div>
+            <div class="sub-meta">
+              <span class="amps-badge"><i class="fas fa-bolt"></i> {{ item.amps }} أمبير</span>
+              <span><i class="fas fa-layer-group"></i> {{ getBoardName(item.boardId) }}</span>
+              <span><i class="fas fa-money-bill"></i> {{ formatMoney(item.total) }}</span>
+            </div>
+          </div>
+          <div class="sub-amps" v-if="can('billing_manage')">
+            <button v-if="!item.paid" class="btn btn-success btn-xs" @click="togglePay(item.subscriberId, true)" title="تسديد"><i class="fas fa-check"></i></button>
+            <button v-if="item.paid" class="btn btn-warning btn-xs" @click="togglePay(item.subscriberId, false)" title="الغاء"><i class="fas fa-undo"></i></button>
           </div>
         </div>
-        <div class="table-wrap" style="border:none">
-          <table v-if="billingList.length > 0">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>الاسم</th>
-                <th>البورد</th>
-                <th>الامبيرات</th>
-                <th>سعر الامبير</th>
-                <th>المبلغ</th>
-                <th>الحالة</th>
-                <th v-if="can('billing_manage')">الاجراء</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(item, i) in billingList" :key="item.subscriberId" :style="item.paid ? 'opacity:.7' : ''">
-                <td>{{ i + 1 }}</td>
-                <td><strong :style="item.paid ? 'text-decoration:line-through;text-decoration-color:var(--success)' : ''">{{ item.name }}</strong></td>
-                <td>{{ getBoardName(item.boardId) }}</td>
-                <td><span class="amps-display"><i class="fas fa-bolt"></i> {{ item.amps }}</span></td>
-                <td>{{ formatMoney(item.pricePerAmp) }}</td>
-                <td><strong>{{ formatMoney(item.total) }}</strong></td>
-                <td>
-                  <span class="badge" :class="item.paid ? 'badge-success' : 'badge-danger'">
-                    <i :class="item.paid ? 'fas fa-check-circle' : 'fas fa-times-circle'"></i>
-                    {{ item.paid ? 'مدفوع' : 'غير مدفوع' }}
-                  </span>
-                </td>
-                <td v-if="can('billing_manage')">
-                  <button v-if="!item.paid" class="btn btn-success btn-xs" @click="togglePay(item.subscriberId, true)" title="تسديد">
-                    <i class="fas fa-check"></i> تسديد
-                  </button>
-                  <button v-else class="btn btn-warning btn-xs" @click="togglePay(item.subscriberId, false)" title="الغاء">
-                    <i class="fas fa-undo"></i> الغاء
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-          <div v-else class="empty-state">
-            <i class="fas fa-file-invoice-dollar"></i>
-            <p>لا يوجد مشتركين في النظام</p>
-          </div>
+      </div>
+
+      <div v-if="billingList.length === 0" class="card">
+        <div class="empty-state">
+          <i class="fas fa-file-invoice-dollar"></i>
+          <p>لا يوجد مشتركين في النظام</p>
         </div>
       </div>
     </div>

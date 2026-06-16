@@ -44,6 +44,64 @@ function formatMoney(n) {
   return Number(n).toLocaleString('en-US');
 }
 
+// --- Sample Data ---
+function getSampleData() {
+  const now = new Date();
+  const cy = now.getFullYear();
+  const cm = now.getMonth() + 1;
+  const d = (offset) => { const dt = new Date(); dt.setDate(dt.getDate() - offset); return dt.toISOString().slice(0,10); };
+  const id = (n) => n;
+  const areas = [
+    { id: id('area_1'), name: 'حي القادسية', createdAt: d(90) },
+    { id: id('area_2'), name: 'حي الاندلس', createdAt: d(85) },
+    { id: id('area_3'), name: 'حي المنصور', createdAt: d(80) },
+  ];
+  const boards = [
+    { id: id('board_1'), name: 'بورد 1', areaId: id('area_1'), createdAt: d(80) },
+    { id: id('board_2'), name: 'بورد 2', areaId: id('area_1'), createdAt: d(75) },
+    { id: id('board_3'), name: 'بورد السلام', areaId: id('area_2'), createdAt: d(70) },
+    { id: id('board_4'), name: 'بورد النور', areaId: id('area_3'), createdAt: d(65) },
+  ];
+  const generators = [
+    { id: id('gen_1'), name: 'مولد القادسية 1', areaId: id('area_1'), owner: 'ابو علي', ownerPhone: '07701234567', generatorNumber: 'G-001', createdAt: d(80) },
+    { id: id('gen_2'), name: 'مولد الاندلس', areaId: id('area_2'), owner: 'الحاج كريم', ownerPhone: '07707654321', generatorNumber: 'G-002', createdAt: d(70) },
+  ];
+  const subs = [
+    { id: id('sub_1'), name: 'علي محمد', phone: '07711223344', address: 'شارع ١', boardId: id('board_1'), generatorId: id('gen_1'), amps: 5, connectionNumber: '1', notes: '', createdAt: d(60) },
+    { id: id('sub_2'), name: 'حسين احمد', phone: '07722334455', address: 'شارع ٢', boardId: id('board_1'), generatorId: id('gen_1'), amps: 10, connectionNumber: '2', notes: '', createdAt: d(55) },
+    { id: id('sub_3'), name: 'عباس كريم', phone: '07733445566', address: 'شارع ٣', boardId: id('board_2'), generatorId: id('gen_1'), amps: 7, connectionNumber: '1', notes: 'صاحب المحل', createdAt: d(50) },
+    { id: id('sub_4'), name: 'محمد رضا', phone: '07744556677', address: 'حي الاندلس', boardId: id('board_3'), generatorId: id('gen_2'), amps: 3, connectionNumber: '1', notes: '', createdAt: d(45) },
+    { id: id('sub_5'), name: 'زهراء حسن', phone: '07755667788', address: 'شارع المنصور', boardId: id('board_4'), generatorId: id('gen_2'), amps: 5, connectionNumber: '1', notes: '', createdAt: d(40) },
+    { id: id('sub_6'), name: 'مصطفى جليل', phone: '07766778899', address: 'شارع ٥', boardId: id('board_2'), generatorId: id('gen_1'), amps: 15, connectionNumber: '2', notes: 'مول تجاري', createdAt: d(35) },
+    { id: id('sub_7'), name: 'حسن علي', phone: '07777889900', address: 'بغداد', boardId: id('board_3'), generatorId: id('gen_2'), amps: 10, connectionNumber: '2', notes: '', createdAt: d(30), status: 'inactive' },
+    { id: id('sub_8'), name: 'نور الهدى', phone: '07788990011', address: 'حي القادسية', boardId: id('board_1'), generatorId: id('gen_1'), amps: 5, connectionNumber: '3', notes: '', createdAt: d(25) },
+  ];
+  // Monthly settings for last 3 months
+  const monthlySettings = [];
+  const prices = [1500, 1500, 1500];
+  for (let i = 0; i < 3; i++) {
+    let m = cm - i;
+    let y = cy;
+    if (m <= 0) { m += 12; y -= 1; }
+    monthlySettings.push({ id: id('ms_' + i), month: m, year: y, pricePerAmp: prices[i] });
+  }
+  // Payments - some paid some not
+  const payments = [];
+  const paidSubs = [id('sub_1'), id('sub_3'), id('sub_5'), id('sub_8')];
+  for (let i = 0; i < 3; i++) {
+    let m = cm - i;
+    let y = cy;
+    if (m <= 0) { m += 12; y -= 1; }
+    for (const sid of paidSubs) {
+      payments.push({ id: id('pay_' + sid + '_' + i), subscriberId: sid, month: m, year: y, paid: true, paidAt: d(i * 30 + 5) });
+    }
+    // Add some unpaid
+    payments.push({ id: id('pay_un_' + i), subscriberId: id('sub_2'), month: m, year: y, paid: false, paidAt: null });
+    payments.push({ id: id('pay_un2_' + i), subscriberId: id('sub_6'), month: m, year: y, paid: false, paidAt: null });
+  }
+  return { areas, boards, generators, subscribers: subs, monthlySettings, payments };
+}
+
 // --- Default Data Structure ---
 function getDefaultData() {
   return {
@@ -98,7 +156,8 @@ const { reactive, computed } = Vue;
 GM.createStore = function () {
   const saved = GM.loadData();
   const defaults = getDefaultData();
-  const initial = saved || defaults;
+  const sample = getSampleData();
+  const initial = saved || (Object.assign(defaults, sample));
 
   const store = reactive({
     // --- Data ---
@@ -164,9 +223,17 @@ GM.createStore = function () {
       if (item) { item.name = name.trim(); item.areaId = areaId; this._save(); }
     },
     deleteBoard(id) {
+      const subs = this.subscribers.filter(s => s.boardId === id);
+      if (subs.length > 0) {
+        console.warn('Cannot delete board with subscribers');
+        return false;
+      }
       this.boards = this.boards.filter(b => b.id !== id);
-      this.subscribers = this.subscribers.filter(s => s.boardId !== id);
       this._save();
+      return true;
+    },
+    canDeleteBoard(id) {
+      return this.subscribers.filter(s => s.boardId === id).length === 0;
     },
     getBoardName(id) {
       if (!id) return '-';
@@ -220,6 +287,7 @@ GM.createStore = function () {
         amps: Number(data.amps) || 5,
         connectionNumber: data.connectionNumber || '',
         notes: data.notes || '',
+        status: data.status || 'active',
         createdAt: today()
       });
       this._save();
@@ -235,6 +303,7 @@ GM.createStore = function () {
         s.amps = Number(data.amps) || 5;
         s.connectionNumber = data.connectionNumber || '';
         s.notes = data.notes || '';
+        s.status = data.status || 'active';
         this._save();
       }
     },
