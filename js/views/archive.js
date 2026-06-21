@@ -1,4 +1,4 @@
-﻿/* ===========================================
+/* ===========================================
    archive.js - صفحة الأرشيف الشهري
    ===========================================
    - عرض سجل الأشهر السابقة
@@ -11,7 +11,7 @@ GM.registerView('archive', {
     <div>
       <div class="page-header">
         <div>
-          <h2><span class="material-symbols-rounded">archive</span> الأرشيف الشهري</h2>
+          <h2><i class="fas fa-archive"></i> الأرشيف الشهري</h2>
           <div class="subtitle">سجل جميع الأشهر السابقة مع المبالغ المالية</div>
         </div>
       </div>
@@ -23,15 +23,15 @@ GM.registerView('archive', {
           <div class="archive-year">{{ arc.year }}</div>
           <div class="archive-total">{{ formatMoney(arc.total) }}</div>
           <div class="archive-counts">
-            <span style="color:var(--success)"><span class="material-symbols-rounded">check_circle</span> {{ arc.paidCount }}</span>
-            <span style="color:var(--danger)"><span class="material-symbols-rounded">cancel</span> {{ arc.unpaidCount }}</span>
-            <span style="color:var(--rose)"><span class="material-symbols-rounded">shopping_cart</span> {{ formatMoney(arc.expenses) }}</span>
+            <span style="color:var(--success)"><i class="fas fa-check-circle"></i> {{ arc.paidCount }}</span>
+            <span style="color:var(--danger)"><i class="fas fa-times-circle"></i> {{ arc.unpaidCount }}</span>
+            <span style="color:var(--rose)"><i class="fas fa-shopping-cart"></i> {{ formatMoney(arc.expenses) }}</span>
           </div>
         </div>
       </div>
       <div v-else class="card">
         <div class="empty-state">
-          <span class="material-symbols-rounded">archive</span>
+          <i class="fas fa-archive"></i>
           <p>لا توجد بيانات شهرية بعد</p>
           <p class="sub-text">قم بتحديد سعر الامبير لأي شهر لبدء تسجيل البيانات</p>
         </div>
@@ -40,27 +40,31 @@ GM.registerView('archive', {
       <!-- التقرير المفصل -->
       <div v-if="selectedArchive" class="card" style="margin-top:1rem">
         <div class="card-header">
-          <h3><span class="material-symbols-rounded">bar_chart</span> تقرير شهر {{ monthName(selectedMonth) }} {{ selectedYear }}</h3>
-          <button class="btn btn-ghost btn-sm" @click="selectedArchive = null"><span class="material-symbols-rounded">close</span> اغلاق</button>
+          <h3><i class="fas fa-chart-bar"></i> تقرير شهر {{ monthName(selectedMonth) }} {{ selectedYear }}</h3>
+          <button class="btn btn-ghost btn-sm" @click="selectedArchive = null"><i class="fas fa-times"></i> اغلاق</button>
         </div>
 
         <div class="stats-grid" style="margin-bottom:1rem">
           <div class="stat-card gradient-blue">
+            <i class="fas fa-file-invoice-dollar stat-icon"></i>
             <div class="stat-label">المبلغ المستحق</div>
             <div class="stat-value">{{ formatMoney(selectedTotal) }}</div>
             <div class="stat-sub">سعر الامبير {{ formatMoney(selectedPrice) }}</div>
           </div>
           <div class="stat-card gradient-green">
+            <i class="fas fa-hand-holding-usd stat-icon"></i>
             <div class="stat-label">المحصل</div>
             <div class="stat-value">{{ formatMoney(selectedCollected) }}</div>
             <div class="stat-sub">{{ selectedPaidCount }} مشترك</div>
           </div>
           <div class="stat-card gradient-red">
+            <i class="fas fa-exclamation-circle stat-icon"></i>
             <div class="stat-label">الديون</div>
             <div class="stat-value">{{ formatMoney(selectedDebt) }}</div>
             <div class="stat-sub">{{ selectedUnpaidCount }} مشترك</div>
           </div>
           <div class="stat-card gradient-rose">
+            <i class="fas fa-shopping-cart stat-icon"></i>
             <div class="stat-label">المصروفات</div>
             <div class="stat-value">{{ formatMoney(selectedExpenses) }}</div>
             <div class="stat-sub">{{ selectedExpensesCount }} عملية</div>
@@ -83,7 +87,7 @@ GM.registerView('archive', {
               <tr v-for="(item, i) in selectedBillingList" :key="item.subscriberId">
                 <td>{{ i + 1 }}</td>
                 <td>{{ item.name }}</td>
-                <td><span class="amps-display"><span class="material-symbols-rounded">bolt</span> {{ item.amps }}</span></td>
+                <td><span class="amps-display"><i class="fas fa-bolt"></i> {{ item.amps }}</span></td>
                 <td>{{ formatMoney(item.total) }}</td>
                 <td>
                   <span class="badge" :class="item.paid ? 'badge-success' : 'badge-danger'">

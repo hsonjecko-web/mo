@@ -1,76 +1,55 @@
-﻿/* ===========================================
+/* ===========================================
    sidebar.js - مكون القائمة الجانبية (Sidebar)
    ===========================================
-   المسؤولية: عرض القائمة الجانبية مع:
-   - روابط التصفح حسب الصلاحيات
+   التصميم: مستوحى من The Sovereign Ledger
+   - شريط جانبي أنيق مع أيقونات Material
+   - روابط تصفح حسب الصلاحيات
    - عرض عدد المتاخرين
-   - دعم الوضع الليلي
    =========================================== */
 
 GM.registerComponent('app-sidebar', {
   template: `
-    <aside class="sidebar" :class="{open: open}" :style="(isDesktop && open) ? 'transform:translateX(0)' : ''">
+    <aside class="sidebar" :class="{active: open}">
       <!-- رأس السايدبار -->
       <div class="sidebar-header">
-        <div class="sidebar-logo">
-          <div class="logo-badge"><span class="material-symbols-rounded">bolt</span></div>
-          <span>إدارة المولدات</span>
-        </div>
-        <button class="sidebar-close sidebar-close-btn" @click="$emit('close')">
-          <span class="material-symbols-rounded">close</span>
-        </button>
+        <h2>القائمة</h2>
+        <button class="sidebar-close" @click="$emit('close')">✕</button>
       </div>
 
       <!-- روابط التصفح -->
       <nav class="sidebar-nav">
-        <div class="sidebar-section">الرئيسية</div>
-        <a v-if="can('dashboard')" class="nav-item" :class="{active: activeView === 'dashboard'}" href="#" @click.prevent="nav('dashboard')" style="animation:fadeIn .3s ease both;animation-delay:0s">
-          <span class="material-symbols-rounded">monitoring</span>
-          <span class="nav-text">لوحة التحكم</span>
+        <a v-if="can('dashboard')" class="sidebar-item" :class="{active: activeView === 'dashboard'}" @click.prevent="nav('dashboard')">
+          <span class="material-icons">dashboard</span>لوحة التحكم
+        </a>
+        <a v-if="can('subscribers_view')" class="sidebar-item" :class="{active: activeView === 'subscribers'}" @click.prevent="nav('subscribers')">
+          <span class="material-icons">group</span>المشتركين
+        </a>
+        <a v-if="can('billing_view')" class="sidebar-item" :class="{active: activeView === 'billing'}" @click.prevent="nav('billing')">
+          <span class="material-icons">payments</span>الفوترة
+        </a>
+        <a v-if="can('messages_view')" class="sidebar-item" :class="{active: activeView === 'messages'}" @click.prevent="nav('messages')">
+          <span class="material-icons">send</span>الرسائل والإرسال
+          <span v-if="lateCount > 0" style="background:var(--danger);color:#fff;font-size:11px;padding:1px 7px;border-radius:var(--radius-full);margin-right:auto">{{ lateCount }}</span>
+        </a>
+        <a v-if="can('expenses_view')" class="sidebar-item" :class="{active: activeView === 'expenses'}" @click.prevent="nav('expenses')">
+          <span class="material-icons">receipt_long</span>المصروفات
+        </a>
+        <a v-if="can('archive_view')" class="sidebar-item" :class="{active: activeView === 'archive'}" @click.prevent="nav('archive')">
+          <span class="material-icons">archive</span>الأرشيف الشهري
         </a>
 
-        <div class="sidebar-section">المشتركين</div>
-        <a v-if="can('subscribers_view')" class="nav-item" :class="{active: activeView === 'subscribers'}" href="#" @click.prevent="nav('subscribers')" style="animation:fadeIn .3s ease both;animation-delay:.03s">
-          <span class="material-symbols-rounded">group</span>
-          <span class="nav-text">المشتركين</span>
-        </a>
-        <a v-if="can('billing_view')" class="nav-item" :class="{active: activeView === 'billing'}" href="#" @click.prevent="nav('billing')" style="animation:fadeIn .3s ease both;animation-delay:.06s">
-          <span class="material-symbols-rounded">receipt_long</span>
-          <span class="nav-text">الفوترة</span>
-        </a>
+        <div class="sidebar-divider"></div>
 
-        <div class="sidebar-section">الرسائل</div>
-        <a v-if="can('messages_view')" class="nav-item" :class="{active: activeView === 'messages'}" href="#" @click.prevent="nav('messages')" style="animation:fadeIn .3s ease both;animation-delay:.09s">
-          <span class="material-symbols-rounded">chat</span>
-          <span class="nav-text">الرسائل والإرسال</span>
-          <span class="nav-badge" v-if="lateCount > 0">{{ lateCount }}</span>
+        <a v-if="can('settings_view')" class="sidebar-item" :class="{active: activeView === 'settings'}" @click.prevent="nav('settings')">
+          <span class="material-icons">settings</span>الإعدادات
         </a>
-
-        <div class="sidebar-section">المالية</div>
-        <a v-if="can('expenses_view')" class="nav-item" :class="{active: activeView === 'expenses'}" href="#" @click.prevent="nav('expenses')" style="animation:fadeIn .3s ease both;animation-delay:.12s">
-          <span class="material-symbols-rounded">payments</span>
-          <span class="nav-text">المصروفات</span>
+        <a v-if="can('users_view')" class="sidebar-item" :class="{active: activeView === 'users'}" @click.prevent="nav('users')">
+          <span class="material-icons">security</span>المستخدمين والصلاحيات
         </a>
-        <a v-if="can('archive_view')" class="nav-item" :class="{active: activeView === 'archive'}" href="#" @click.prevent="nav('archive')" style="animation:fadeIn .3s ease both;animation-delay:.15s">
-          <span class="material-symbols-rounded">archive</span>
-          <span class="nav-text">الأرشيف الشهري</span>
-        </a>
-
-        <div class="sidebar-section">النظام</div>
-        <a v-if="can('settings_view')" class="nav-item" :class="{active: activeView === 'settings'}" href="#" @click.prevent="nav('settings')" style="animation:fadeIn .3s ease both;animation-delay:.18s">
-          <span class="material-symbols-rounded">settings</span>
-          <span class="nav-text">الإعدادات</span>
-        </a>
-        <a v-if="can('users_view')" class="nav-item" :class="{active: activeView === 'users'}" href="#" @click.prevent="nav('users')" style="animation:fadeIn .3s ease both;animation-delay:.21s">
-          <span class="material-symbols-rounded">security</span>
-          <span class="nav-text">المستخدمين والصلاحيات</span>
+        <a class="sidebar-item logout" @click.prevent="$emit('logout')">
+          <span class="material-icons">logout</span>تسجيل الخروج
         </a>
       </nav>
-
-      <!-- فوتر السايدبار -->
-      <div class="sidebar-footer">
-        <span class="material-symbols-rounded">bolt</span> v2.0 | جميع الحقوق محفوظة
-      </div>
     </aside>
   `,
   props: {
@@ -78,26 +57,14 @@ GM.registerComponent('app-sidebar', {
     activeView: { type: String, default: 'dashboard' },
     lateCount: { type: Number, default: 0 }
   },
-  emits: ['navigate', 'close'],
-  data() {
-    return { isDesktop: window.innerWidth >= 992 };
-  },
-  mounted() {
-    window.addEventListener('resize', this.checkWidth);
-  },
-  unmounted() {
-    window.removeEventListener('resize', this.checkWidth);
-  },
+  emits: ['navigate', 'close', 'logout'],
   methods: {
     nav(v) {
       this.$emit('navigate', v);
-      if (!this.isDesktop) this.$emit('close');
+      this.$emit('close');
     },
     can(perm) {
       return GM.auth && GM.auth.hasPermission(perm);
-    },
-    checkWidth() {
-      this.isDesktop = window.innerWidth >= 992;
     }
   }
 });

@@ -1,39 +1,45 @@
-﻿/* ===========================================
+/* ===========================================
    footer.js - مكون الفوتر (Footer Component)
    ===========================================
-   المسؤولية: عرض الفوتر السفلي مع:
-   - أزرار تصفح سريعة
-   - معلومات حقوق النشر
-   - أيقونات ملونة
+   التصميم: مستوحى من The Sovereign Ledger
+   - تصميم radio-input للتنقل السريع
+   - أيقونات Material Icons
    =========================================== */
 
 GM.registerComponent('app-footer', {
   template: `
     <footer class="app-footer">
-      <div class="footer-inner">
-        <!-- أزرار التصفح السريع -->
-        <div class="footer-nav">
-          <button v-if="can('dashboard')" class="footer-btn" :class="{active: activeView === 'dashboard'}" @click="nav('dashboard')">
-            <span class="material-symbols-rounded">monitoring</span>
+      <div class="radio-input">
+        <label class="label" :class="{active: activeView === 'dashboard'}" @click="nav('dashboard')">
+          <span class="text">
+            <span class="material-icons">home</span>
             <span>الرئيسية</span>
-          </button>
-          <button v-if="can('subscribers_view')" class="footer-btn" :class="{active: activeView === 'subscribers'}" @click="nav('subscribers')">
-            <span class="material-symbols-rounded">group</span>
+          </span>
+        </label>
+        <label class="label" :class="{active: activeView === 'subscribers'}" @click="nav('subscribers')">
+          <span class="text">
+            <span class="material-icons">reorder</span>
             <span>المشتركين</span>
-          </button>
-          <button class="footer-btn" :class="{active: activeView === 'quickpay'}" @click="nav('quickpay')">
-            <span class="material-symbols-rounded">volunteer_activism</span>
+          </span>
+        </label>
+        <label class="label" :class="{active: activeView === 'quickpay'}" @click="nav('quickpay')">
+          <span class="text">
+            <span class="material-icons">add</span>
             <span>دفع سريع</span>
-          </button>
-          <button v-if="can('expenses_view')" class="footer-btn" :class="{active: activeView === 'expenses'}" @click="nav('expenses')">
-            <span class="material-symbols-rounded">payments</span>
-            <span>المصروفات</span>
-          </button>
-          <button v-if="can('settings_view')" class="footer-btn" :class="{active: activeView === 'settings'}" @click="nav('settings')">
-            <span class="material-symbols-rounded">settings</span>
+          </span>
+        </label>
+        <label class="label" :class="{active: activeView === 'billing'}" @click="nav('billing')">
+          <span class="text">
+            <span class="material-icons">payments</span>
+            <span>الفوترة</span>
+          </span>
+        </label>
+        <label class="label" :class="{active: activeView === 'settings'}" @click="nav('settings')">
+          <span class="text">
+            <span class="material-icons">analytics</span>
             <span>الإعدادات</span>
-          </button>
-        </div>
+          </span>
+        </label>
       </div>
     </footer>
   `,

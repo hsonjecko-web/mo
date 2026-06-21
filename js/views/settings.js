@@ -1,4 +1,4 @@
-﻿/* ===========================================
+/* ===========================================
    settings.js - صفحة الإعدادات الكاملة
    ===========================================
    علامات التبويب (Tabs):
@@ -15,7 +15,7 @@ GM.registerView('settings', {
     <div>
       <div class="page-header">
         <div>
-          <h2><span class="material-symbols-rounded">settings</span> الإعدادات</h2>
+          <h2><i class="fas fa-cog"></i> الإعدادات</h2>
           <div class="subtitle">إدارة جميع بيانات النظام والتهيئة</div>
         </div>
       </div>
@@ -23,22 +23,22 @@ GM.registerView('settings', {
       <!-- علامات التبويب العمودية -->
       <div class="v-tabs">
         <div v-if="can('settings_areas')" class="v-tab" :class="{active: tab === 'areas'}" @click="tab = 'areas'">
-          <span class="material-symbols-rounded">location_on</span> المناطق
+          <i class="fas fa-map-marker-alt"></i> المناطق
         </div>
         <div v-if="can('settings_boards')" class="v-tab" :class="{active: tab === 'boards'}" @click="tab = 'boards'">
-          <span class="material-symbols-rounded">layers</span> البوردات
+          <i class="fas fa-layer-group"></i> البوردات
         </div>
         <div v-if="can('settings_generators')" class="v-tab" :class="{active: tab === 'generators'}" @click="tab = 'generators'">
-          <span class="material-symbols-rounded">factory</span> المولدات
+          <i class="fas fa-industry"></i> المولدات
         </div>
         <div v-if="can('settings_categories')" class="v-tab" :class="{active: tab === 'categories'}" @click="tab = 'categories'">
-          <span class="material-symbols-rounded">sell</span> أصناف المصروفات
+          <i class="fas fa-tags"></i> أصناف المصروفات
         </div>
         <div class="v-tab" :class="{active: tab === 'templates'}" @click="tab = 'templates'">
-          <span class="material-symbols-rounded">mail</span> قوالب الرسائل
+          <i class="fas fa-envelope"></i> قوالب الرسائل
         </div>
         <div class="v-tab" :class="{active: tab === 'general'}" @click="tab = 'general'">
-          <span class="material-symbols-rounded">tune</span> عام
+          <i class="fas fa-sliders-h"></i> عام
         </div>
       </div>
 
@@ -46,29 +46,29 @@ GM.registerView('settings', {
       <div v-if="tab === 'areas'">
         <div class="card">
           <div class="card-header">
-            <h3><span class="material-symbols-rounded">location_on</span> المناطق <span class="badge badge-primary">{{ areas.length }}</span></h3>
+            <h3><i class="fas fa-map-marker-alt"></i> المناطق <span class="badge badge-primary">{{ areas.length }}</span></h3>
             <button class="btn btn-primary btn-sm" @click="openAreaModal">
-              <span class="material-symbols-rounded">add</span> اضافة
+              <i class="fas fa-plus"></i> اضافة
             </button>
           </div>
           <div v-if="areas.length > 0" class="setting-list">
             <div v-for="a in areas" :key="a.id" class="setting-card">
-              <div class="sc-icon"><span class="material-symbols-rounded">location_on</span></div>
+              <div class="sc-icon"><i class="fas fa-map-marker-alt"></i></div>
               <div class="sc-info">
                 <div class="sc-name">{{ a.name }}</div>
                 <div class="sc-meta">
-                  <span><span class="material-symbols-rounded">layers</span> {{ getBoardsCount(a.id) }} بورد</span>
-                  <span><span class="material-symbols-rounded">group</span> {{ getSubsCountByArea(a.id) }} مشترك</span>
+                  <span><i class="fas fa-layer-group"></i> {{ getBoardsCount(a.id) }} بورد</span>
+                  <span><i class="fas fa-users"></i> {{ getSubsCountByArea(a.id) }} مشترك</span>
                 </div>
               </div>
               <div class="sc-actions">
-                <button class="btn btn-info btn-xs" @click="editBoard(b)" title="تعديل"><span class="material-symbols-rounded">edit</span></button>
-                <button class="btn btn-danger btn-xs" @click="deleteBoard(b)" title="حذف"><span class="material-symbols-rounded">delete</span></button>
+                <button class="btn btn-info btn-xs" @click="editBoard(b)" title="تعديل"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-xs" @click="deleteBoard(b)" title="حذف"><i class="fas fa-trash"></i></button>
               </div>
             </div>
           </div>
           <div v-else class="empty-state">
-            <span class="material-symbols-rounded">location_on</span>
+            <i class="fas fa-map-marker-alt"></i>
             <p>لا توجد مناطق</p>
           </div>
         </div>
@@ -78,9 +78,9 @@ GM.registerView('settings', {
       <div v-if="tab === 'boards'">
         <div class="card">
           <div class="card-header">
-            <h3><span class="material-symbols-rounded">layers</span> البوردات</h3>
+            <h3><i class="fas fa-layer-group"></i> البوردات</h3>
             <button class="btn btn-primary btn-sm" @click="openBoardModal">
-              <span class="material-symbols-rounded">add</span> اضافة بورد
+              <i class="fas fa-plus"></i> اضافة بورد
             </button>
           </div>
           <div class="table-wrap">
@@ -94,14 +94,14 @@ GM.registerView('settings', {
                   <td>{{ getSubsCountByBoard(b.id) }}</td>
                   <td style="font-size:.78rem">{{ b.createdAt }}</td>
                   <td>
-                    <button class="btn btn-info btn-xs" @click="editBoard(b)"><span class="material-symbols-rounded">edit</span></button>
-                    <button class="btn btn-danger btn-xs" @click="deleteBoard(b)"><span class="material-symbols-rounded">delete</span></button>
+                    <button class="btn btn-info btn-xs" @click="editBoard(b)"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-danger btn-xs" @click="deleteBoard(b)"><i class="fas fa-trash"></i></button>
                   </td>
                 </tr>
               </tbody>
             </table>
             <div v-else class="empty-state">
-              <span class="material-symbols-rounded">layers</span>
+              <i class="fas fa-layer-group"></i>
               <p>لا توجد بوردات</p>
             </div>
           </div>
@@ -112,31 +112,31 @@ GM.registerView('settings', {
       <div v-if="tab === 'generators'">
         <div class="card">
           <div class="card-header">
-            <h3><span class="material-symbols-rounded">factory</span> المولدات <span class="badge badge-primary">{{ generators.length }}</span></h3>
+            <h3><i class="fas fa-industry"></i> المولدات <span class="badge badge-primary">{{ generators.length }}</span></h3>
             <button class="btn btn-primary btn-sm" @click="openGeneratorModal">
-              <span class="material-symbols-rounded">add</span> اضافة
+              <i class="fas fa-plus"></i> اضافة
             </button>
           </div>
           <div v-if="generators.length > 0" class="setting-list">
             <div v-for="g in generators" :key="g.id" class="setting-card">
-              <div class="sc-icon"><span class="material-symbols-rounded">factory</span></div>
+              <div class="sc-icon"><i class="fas fa-industry"></i></div>
               <div class="sc-info">
                 <div class="sc-name">{{ g.name }}</div>
                 <div class="sc-meta">
-                  <span><span class="material-symbols-rounded">location_on</span> {{ getAreaName(g.areaId) }}</span>
-                  <span><span class="material-symbols-rounded">group</span> {{ getSubsCountByGenerator(g.id) }} مشترك</span>
-                  <span v-if="g.owner"><span class="material-symbols-rounded">person</span> {{ g.owner }}</span>
-                  <span v-if="g.ownerPhone" dir="ltr"><span class="material-symbols-rounded">phone</span> {{ g.ownerPhone }}</span>
+                  <span><i class="fas fa-map-marker-alt"></i> {{ getAreaName(g.areaId) }}</span>
+                  <span><i class="fas fa-users"></i> {{ getSubsCountByGenerator(g.id) }} مشترك</span>
+                  <span v-if="g.owner"><i class="fas fa-user"></i> {{ g.owner }}</span>
+                  <span v-if="g.ownerPhone" dir="ltr"><i class="fas fa-phone"></i> {{ g.ownerPhone }}</span>
                 </div>
               </div>
               <div class="sc-actions">
-                <button class="btn btn-info btn-xs" @click="editGenerator(g)" title="تعديل"><span class="material-symbols-rounded">edit</span></button>
-                <button class="btn btn-danger btn-xs" @click="deleteGenerator(g)" title="حذف"><span class="material-symbols-rounded">delete</span></button>
+                <button class="btn btn-info btn-xs" @click="editGenerator(g)" title="تعديل"><i class="fas fa-edit"></i></button>
+                <button class="btn btn-danger btn-xs" @click="deleteGenerator(g)" title="حذف"><i class="fas fa-trash"></i></button>
               </div>
             </div>
           </div>
           <div v-else class="empty-state">
-            <span class="material-symbols-rounded">factory</span>
+            <i class="fas fa-industry"></i>
             <p>لا توجد مولدات</p>
           </div>
         </div>
@@ -146,27 +146,27 @@ GM.registerView('settings', {
       <div v-if="tab === 'categories'">
         <div class="card">
           <div class="card-header">
-            <h3><span class="material-symbols-rounded">sell</span> أصناف المصروفات <span class="badge badge-primary">{{ categories.length }}</span></h3>
+            <h3><i class="fas fa-tags"></i> أصناف المصروفات <span class="badge badge-primary">{{ categories.length }}</span></h3>
             <button class="btn btn-primary btn-sm" @click="openCategoryModal">
-              <span class="material-symbols-rounded">add</span> اضافة
+              <i class="fas fa-plus"></i> اضافة
             </button>
           </div>
           <div v-if="categories.length > 0" class="setting-list">
             <div v-for="c in categories" :key="c.id" class="setting-card">
-              <div class="sc-icon"><span class="material-symbols-rounded">label</span></div>
+              <div class="sc-icon"><i class="fas fa-tag"></i></div>
               <div class="sc-info">
                 <div class="sc-name">{{ c.name }}</div>
                 <div class="sc-meta">
-                  <span><span class="material-symbols-rounded">calendar_month</span> {{ c.createdAt }}</span>
+                  <span><i class="fas fa-calendar"></i> {{ c.createdAt }}</span>
                 </div>
               </div>
               <div class="sc-actions">
-                <button class="btn btn-danger btn-xs" @click="deleteCategory(c)" title="حذف"><span class="material-symbols-rounded">delete</span></button>
+                <button class="btn btn-danger btn-xs" @click="deleteCategory(c)" title="حذف"><i class="fas fa-trash"></i></button>
               </div>
             </div>
           </div>
           <div v-else class="empty-state">
-            <span class="material-symbols-rounded">sell</span>
+            <i class="fas fa-tags"></i>
             <p>لا توجد أصناف مصروفات</p>
             <p class="sub-text">أضف أصناف مثل: زيت, وقود, صيانة, قطع غيار, رواتب...</p>
           </div>
@@ -177,24 +177,24 @@ GM.registerView('settings', {
       <div v-if="tab === 'templates'">
         <div class="card">
           <div class="card-header">
-            <h3><span class="material-symbols-rounded">mail</span> قوالب الرسائل</h3>
+            <h3><i class="fas fa-envelope"></i> قوالب الرسائل</h3>
             <button v-if="can('messages_templates')" class="btn btn-primary btn-sm" @click="openTemplateModal">
-              <span class="material-symbols-rounded">add</span> قالب جديد
+              <i class="fas fa-plus"></i> قالب جديد
             </button>
           </div>
           <div style="display:flex;flex-direction:column;gap:.5rem">
             <div v-for="t in templates" :key="t.id" class="template-card" @click="editTemplate(t)">
               <div class="template-title">
-                <span class="material-symbols-rounded" style="color:var(--primary)">message</span> {{ t.title }}
+                <i class="fas fa-message" style="color:var(--primary)"></i> {{ t.title }}
               </div>
               <div class="template-body" style="white-space:pre-wrap">{{ t.body }}</div>
               <div class="template-actions" v-if="can('messages_templates')">
-                <button class="btn btn-info btn-xs" @click.stop="editTemplate(t)"><span class="material-symbols-rounded">edit</span> تعديل</button>
-                <button class="btn btn-danger btn-xs" @click.stop="deleteTemplate(t)"><span class="material-symbols-rounded">delete</span></button>
+                <button class="btn btn-info btn-xs" @click.stop="editTemplate(t)"><i class="fas fa-edit"></i> تعديل</button>
+                <button class="btn btn-danger btn-xs" @click.stop="deleteTemplate(t)"><i class="fas fa-trash"></i></button>
               </div>
             </div>
             <div v-if="templates.length === 0" class="empty-state" style="padding:1.5rem">
-              <span class="material-symbols-rounded">mail</span>
+              <i class="fas fa-envelope"></i>
               <p>لا توجد قوالب رسائل</p>
             </div>
           </div>
@@ -205,7 +205,7 @@ GM.registerView('settings', {
       <div v-if="tab === 'general'">
         <div class="card" style="margin-bottom:1rem">
           <div class="card-header">
-            <h3><span class="material-symbols-rounded">palette</span> المظهر</h3>
+            <h3><i class="fas fa-palette"></i> المظهر</h3>
           </div>
           <div class="toggle-row">
             <div class="toggle-label">
@@ -218,7 +218,7 @@ GM.registerView('settings', {
 
         <div class="card" style="margin-bottom:1rem">
           <div class="card-header">
-            <h3><span class="material-symbols-rounded">attach_money</span> الإعدادات المالية</h3>
+            <h3><i class="fas fa-dollar-sign"></i> الإعدادات المالية</h3>
           </div>
           <div class="form-row">
             <div class="form-group">
@@ -231,20 +231,20 @@ GM.registerView('settings', {
 
         <div class="card" style="margin-bottom:1rem">
           <div class="card-header">
-            <h3><span class="material-symbols-rounded">database</span> إدارة البيانات</h3>
+            <h3><i class="fas fa-database"></i> إدارة البيانات</h3>
           </div>
           <div style="display:flex;gap:.5rem;flex-wrap:wrap">
             <button v-if="can('export_data')" class="btn btn-info" @click="exportData">
-              <span class="material-symbols-rounded">download</span> تصدير البيانات
+              <i class="fas fa-download"></i> تصدير البيانات
             </button>
             <button v-if="can('import_data')" class="btn btn-warning" @click="$refs.importInput.click()">
-              <span class="material-symbols-rounded">upload</span> استيراد البيانات
+              <i class="fas fa-upload"></i> استيراد البيانات
             </button>
             <button v-if="can('clear_data')" class="btn btn-danger" @click="clearData">
-              <span class="material-symbols-rounded">delete</span> مسح كل البيانات
+              <i class="fas fa-trash"></i> مسح كل البيانات
             </button>
             <button class="btn btn-ghost-primary" @click="loadSampleData">
-              <span class="material-symbols-rounded">science</span> بيانات تجربة
+              <i class="fas fa-flask"></i> بيانات تجربة
             </button>
           </div>
           <input type="file" ref="importInput" accept=".json" style="display:none" @change="importData">
@@ -252,7 +252,7 @@ GM.registerView('settings', {
 
         <div class="card">
           <div class="card-header">
-            <h3><span class="material-symbols-rounded">info</span> معلومات النظام</h3>
+            <h3><i class="fas fa-info-circle"></i> معلومات النظام</h3>
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:.5rem;font-size:.82rem">
             <div><strong>عدد المشتركين:</strong> {{ store.subscribers.length }}</div>
@@ -269,8 +269,8 @@ GM.registerView('settings', {
       <div class="modal-overlay" v-if="showAreaModal" @click.self="showAreaModal = false">
         <div class="modal modal-sm">
           <div class="modal-header">
-            <h3><span class="material-symbols-rounded">location_on</span> {{ areaModalMode === 'add' ? 'اضافة' : 'تعديل' }} منطقة</h3>
-            <button class="modal-close" @click="showAreaModal = false"><span class="material-symbols-rounded">close</span></button>
+            <h3><i class="fas fa-map-marker-alt"></i> {{ areaModalMode === 'add' ? 'اضافة' : 'تعديل' }} منطقة</h3>
+            <button class="modal-close" @click="showAreaModal = false"><i class="fas fa-times"></i></button>
           </div>
           <div class="modal-body">
             <div class="form-group">
@@ -279,7 +279,7 @@ GM.registerView('settings', {
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-primary" @click="saveArea"><span class="material-symbols-rounded">save</span> حفظ</button>
+            <button class="btn btn-primary" @click="saveArea"><i class="fas fa-save"></i> حفظ</button>
             <button class="btn btn-ghost" @click="showAreaModal = false">الغاء</button>
           </div>
         </div>
@@ -289,8 +289,8 @@ GM.registerView('settings', {
       <div class="modal-overlay" v-if="showBoardModal" @click.self="showBoardModal = false">
         <div class="modal">
           <div class="modal-header">
-            <h3><span class="material-symbols-rounded">layers</span> {{ boardModalMode === 'add' ? 'اضافة' : 'تعديل' }} بورد</h3>
-            <button class="modal-close" @click="showBoardModal = false"><span class="material-symbols-rounded">close</span></button>
+            <h3><i class="fas fa-layer-group"></i> {{ boardModalMode === 'add' ? 'اضافة' : 'تعديل' }} بورد</h3>
+            <button class="modal-close" @click="showBoardModal = false"><i class="fas fa-times"></i></button>
           </div>
           <div class="modal-body">
             <div class="form-group">
@@ -308,7 +308,7 @@ GM.registerView('settings', {
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-primary" @click="saveBoard"><span class="material-symbols-rounded">save</span> حفظ</button>
+            <button class="btn btn-primary" @click="saveBoard"><i class="fas fa-save"></i> حفظ</button>
             <button class="btn btn-ghost" @click="showBoardModal = false">الغاء</button>
           </div>
         </div>
@@ -318,8 +318,8 @@ GM.registerView('settings', {
       <div class="modal-overlay" v-if="showGenModal" @click.self="showGenModal = false">
         <div class="modal">
           <div class="modal-header">
-            <h3><span class="material-symbols-rounded">factory</span> {{ genModalMode === 'add' ? 'اضافة' : 'تعديل' }} مولد</h3>
-            <button class="modal-close" @click="showGenModal = false"><span class="material-symbols-rounded">close</span></button>
+            <h3><i class="fas fa-industry"></i> {{ genModalMode === 'add' ? 'اضافة' : 'تعديل' }} مولد</h3>
+            <button class="modal-close" @click="showGenModal = false"><i class="fas fa-times"></i></button>
           </div>
           <div class="modal-body">
             <div class="form-row">
@@ -347,19 +347,13 @@ GM.registerView('settings', {
                 <input v-model="genForm.generatorNumber" class="form-input" placeholder="رقم المولد / اللوحة">
               </div>
             </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">قدرة المولد (أمبير)</label>
-                <input type="number" v-model.number="genForm.amps" class="form-input" placeholder="مثال: 200" min="0">
-              </div>
-              <div class="form-group">
-                <label class="form-label">رقم هاتف المولد</label>
-                <input v-model="genForm.ownerPhone" class="form-input" placeholder="077xxxxxxxx" dir="ltr">
-              </div>
+            <div class="form-group">
+              <label class="form-label">رقم هاتف المولد</label>
+              <input v-model="genForm.ownerPhone" class="form-input" placeholder="077xxxxxxxx" dir="ltr">
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-primary" @click="saveGenerator"><span class="material-symbols-rounded">save</span> حفظ</button>
+            <button class="btn btn-primary" @click="saveGenerator"><i class="fas fa-save"></i> حفظ</button>
             <button class="btn btn-ghost" @click="showGenModal = false">الغاء</button>
           </div>
         </div>
@@ -369,8 +363,8 @@ GM.registerView('settings', {
       <div class="modal-overlay" v-if="showCatModal" @click.self="showCatModal = false">
         <div class="modal modal-sm">
           <div class="modal-header">
-            <h3><span class="material-symbols-rounded">label</span> اضافة صنف مصروفات</h3>
-            <button class="modal-close" @click="showCatModal = false"><span class="material-symbols-rounded">close</span></button>
+            <h3><i class="fas fa-tag"></i> اضافة صنف مصروفات</h3>
+            <button class="modal-close" @click="showCatModal = false"><i class="fas fa-times"></i></button>
           </div>
           <div class="modal-body">
             <div class="form-group">
@@ -379,7 +373,7 @@ GM.registerView('settings', {
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-primary" @click="saveCategory"><span class="material-symbols-rounded">save</span> حفظ</button>
+            <button class="btn btn-primary" @click="saveCategory"><i class="fas fa-save"></i> حفظ</button>
             <button class="btn btn-ghost" @click="showCatModal = false">الغاء</button>
           </div>
         </div>
@@ -389,8 +383,8 @@ GM.registerView('settings', {
       <div class="modal-overlay" v-if="showTplModal" @click.self="showTplModal = false">
         <div class="modal">
           <div class="modal-header">
-            <h3><span class="material-symbols-rounded">mail</span> {{ tplMode === 'add' ? 'قالب جديد' : 'تعديل القالب' }}</h3>
-            <button class="modal-close" @click="showTplModal = false"><span class="material-symbols-rounded">close</span></button>
+            <h3><i class="fas fa-envelope"></i> {{ tplMode === 'add' ? 'قالب جديد' : 'تعديل القالب' }}</h3>
+            <button class="modal-close" @click="showTplModal = false"><i class="fas fa-times"></i></button>
           </div>
           <div class="modal-body">
             <div class="form-group">
@@ -406,7 +400,7 @@ GM.registerView('settings', {
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-primary" @click="saveTemplate"><span class="material-symbols-rounded">save</span> حفظ</button>
+            <button class="btn btn-primary" @click="saveTemplate"><i class="fas fa-save"></i> حفظ</button>
             <button class="btn btn-ghost" @click="showTplModal = false">الغاء</button>
           </div>
         </div>
@@ -711,4 +705,3 @@ GM.registerView('settings', {
     }
   }
 });
-

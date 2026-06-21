@@ -248,7 +248,6 @@ GM.createStore = function () {
         owner: (details && details.owner) || '',
         ownerPhone: (details && details.ownerPhone) || '',
         generatorNumber: (details && details.generatorNumber) || '',
-        amps: Number(details && details.amps) || 0,
         createdAt: today()
       });
       this._save();
@@ -261,7 +260,6 @@ GM.createStore = function () {
           item.owner = details.owner || '';
           item.ownerPhone = details.ownerPhone || '';
           item.generatorNumber = details.generatorNumber || '';
-          if (details.amps !== undefined) item.amps = Number(details.amps) || 0;
         }
         this._save();
       }

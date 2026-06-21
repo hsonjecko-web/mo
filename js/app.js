@@ -1,4 +1,4 @@
-﻿/* ===========================================
+/* ===========================================
    app.js - ملف التطبيق الرئيسي
    ===========================================
    هذا الملف يقوم بـ:
@@ -48,7 +48,7 @@
     },
     watch: {
       theme(v) {
-        document.documentElement.className = v === 'dark' ? 'dark' : '';
+        document.documentElement.setAttribute('data-theme', v);
         localStorage.setItem('gm_theme', v);
       },
       sidebarOpen(v) {
@@ -112,9 +112,7 @@
     },
     mounted() {
       // استعادة الوضع الليلي
-      if (this.theme === 'dark') {
-        document.documentElement.className = 'dark';
-      }
+      document.documentElement.setAttribute('data-theme', this.theme);
 
       // التحقق من تسجيل الدخول المسبق
       if (GM.auth.isLoggedIn()) {

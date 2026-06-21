@@ -1,4 +1,4 @@
-﻿/* ===========================================
+/* ===========================================
    users.js - صفحة إدارة المستخدمين والصلاحيات
    ===========================================
    - عرض قائمة المستخدمين
@@ -12,12 +12,12 @@ GM.registerView('users', {
     <div>
       <div class="page-header">
         <div>
-          <h2><span class="material-symbols-rounded">security</span> المستخدمين والصلاحيات</h2>
+          <h2><i class="fas fa-shield-alt"></i> المستخدمين والصلاحيات</h2>
           <div class="subtitle">إدارة حسابات المستخدمين وصلاحياتهم</div>
         </div>
         <div class="page-actions">
           <button v-if="can('users_add')" class="btn btn-primary" @click="openAdd">
-            <span class="material-symbols-rounded">add</span> اضافة مستخدم
+            <i class="fas fa-plus"></i> اضافة مستخدم
           </button>
         </div>
       </div>
@@ -61,14 +61,14 @@ GM.registerView('users', {
                 </td>
                 <td style="font-size:.78rem">{{ u.createdAt }}</td>
                 <td v-if="can('users_edit') || can('users_delete')">
-                  <button v-if="can('users_edit')" class="btn btn-info btn-xs" @click="openEdit(u)"><span class="material-symbols-rounded">edit</span></button>
-                  <button v-if="can('users_delete')" class="btn btn-danger btn-xs" @click="deleteUser(u)"><span class="material-symbols-rounded">delete</span></button>
+                  <button v-if="can('users_edit')" class="btn btn-info btn-xs" @click="openEdit(u)"><i class="fas fa-edit"></i></button>
+                  <button v-if="can('users_delete')" class="btn btn-danger btn-xs" @click="deleteUser(u)"><i class="fas fa-trash"></i></button>
                 </td>
               </tr>
             </tbody>
           </table>
           <div v-else class="empty-state">
-            <span class="material-symbols-rounded">group</span>
+            <i class="fas fa-users"></i>
             <p>لا يوجد مستخدمين</p>
           </div>
         </div>
@@ -78,8 +78,8 @@ GM.registerView('users', {
       <div class="modal-overlay" v-if="showModal" @click.self="closeModal">
         <div class="modal modal-lg">
           <div class="modal-header">
-            <h3><span class="material-symbols-rounded">{{ modalMode === 'add' ? 'person_add' : 'edit' }}</span> {{ modalMode === 'add' ? 'اضافة' : 'تعديل' }} مستخدم</h3>
-            <button class="modal-close" @click="closeModal"><span class="material-symbols-rounded">close</span></button>
+            <h3><i :class="modalMode === 'add' ? 'fas fa-user-plus' : 'fas fa-user-edit'"></i> {{ modalMode === 'add' ? 'اضافة' : 'تعديل' }} مستخدم</h3>
+            <button class="modal-close" @click="closeModal"><i class="fas fa-times"></i></button>
           </div>
           <div class="modal-body">
             <div class="form-row">
@@ -115,7 +115,7 @@ GM.registerView('users', {
 
             <!-- الصلاحيات المخصصة -->
             <div v-if="form.role === 'custom'" class="form-section">
-              <div class="form-section-title"><span class="material-symbols-rounded">key</span> الصلاحيات المخصصة</div>
+              <div class="form-section-title"><i class="fas fa-key"></i> الصلاحيات المخصصة</div>
               <div class="permissions-grid">
                 <div v-for="(pName, pKey) in allPerms" :key="pKey" class="permission-item">
                   <input type="checkbox" :value="pKey" v-model="form.customPermissions" style="width:16px;height:16px;accent-color:var(--primary)">
@@ -125,12 +125,12 @@ GM.registerView('users', {
             </div>
 
             <div v-if="form.role !== 'custom'" style="padding:.5rem .65rem;background:var(--bg);border-radius:var(--radius-xs);font-size:.8rem;color:var(--text-secondary)">
-              <span class="material-symbols-rounded">info</span>
+              <i class="fas fa-info-circle"></i>
               صلاحيات دور "{{ getRoleName(form.role) }}": {{ getPermCount(form.role) }} صلاحية
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-primary" @click="saveUser"><span class="material-symbols-rounded">save</span> حفظ</button>
+            <button class="btn btn-primary" @click="saveUser"><i class="fas fa-save"></i> حفظ</button>
             <button class="btn btn-ghost" @click="closeModal">الغاء</button>
           </div>
         </div>

@@ -1,4 +1,4 @@
-﻿/* ===========================================
+/* ===========================================
    quickpay.js - صفحة الدفع السريع
    =========================================== */
 
@@ -7,7 +7,7 @@ GM.registerView('quickpay', {
     <div>
       <div class="page-header">
         <div>
-          <h2><span class="material-symbols-rounded">volunteer_activism</span> دفع سريع</h2>
+          <h2><i class="fas fa-hand-holding-usd"></i> دفع سريع</h2>
           <div class="subtitle">ابحث عن المشترك وسجل الدفع بسرعة</div>
         </div>
       </div>
@@ -16,7 +16,7 @@ GM.registerView('quickpay', {
       <div class="card" style="margin-bottom:1rem;padding:.85rem 1rem">
         <div class="filter-bar">
           <div class="search-input" style="flex:1;min-width:200px">
-            <span class="material-symbols-rounded">search</span>
+            <i class="fas fa-search"></i>
             <input v-model="searchQuery" placeholder="ابحث باسم المشترك او رقم الهاتف..." ref="searchInput">
           </div>
           <div class="form-group" style="min-width:110px">
@@ -38,64 +38,34 @@ GM.registerView('quickpay', {
         </div>
       </div>
 
-      <!-- قائمة المشتركين الغير دافعين -->
+      <!-- قائمة المشتركين -->
       <div v-if="displayList.length > 0" class="sub-list">
-        <div v-for="sub in displayList" :key="sub.id" class="sub-card" @click="openPay(sub)" style="cursor:pointer">
-          <div class="sub-bar" style="background:var(--danger)"></div>
+        <div v-for="sub in displayList" :key="sub.id" class="sub-card" :style="{borderColor: getPayStatus(sub.id) ? 'var(--success)' : 'var(--danger)'}">
+          <div class="sub-bar" :style="{background: getPayStatus(sub.id) ? 'var(--success)' : 'var(--danger)'}"></div>
           <div class="sub-info">
             <div class="sub-name">{{ sub.name }}</div>
             <div class="sub-meta">
-              <span class="amps-badge"><span class="material-symbols-rounded">bolt</span> {{ sub.amps }} أمبير</span>
-              <span><span class="material-symbols-rounded">layers</span> {{ getBoardName(sub.boardId) }}</span>
-              <span dir="ltr"><span class="material-symbols-rounded">phone</span> {{ sub.phone }}</span>
+              <span class="amps-badge"><i class="fas fa-bolt"></i> {{ sub.amps }} أمبير</span>
+              <span><i class="fas fa-layer-group"></i> {{ getBoardName(sub.boardId) }}</span>
+              <span dir="ltr"><i class="fas fa-phone"></i> {{ sub.phone }}</span>
             </div>
           </div>
           <div class="sub-amps" style="flex-direction:column;align-items:flex-end;gap:2px">
-            <div style="font-size:.7rem;font-weight:700;color:var(--danger)">{{ formatMoney(sub.amps * pricePerAmp) }}</div>
-            <button class="btn btn-info btn-xs" @click.stop="whatsApp(sub)" title="رسالة"><span class="material-symbols-rounded">chat</span></button>
-          </div>
-        </div>
-      </div>
-
-      <!-- رسالة لا يوجد متأخرين -->
-      <div v-if="displayList.length === 0" class="card">
-        <div class="empty-state" style="padding:2rem">
-          <span class="material-symbols-rounded" style="font-size:3rem">check_circle</span>
-          <p>جميع المشتركين مسددين لهذا الشهر</p>
-        </div>
-      </div>
-
-      <!-- مودال تأكيد الدفع -->
-      <div class="modal-overlay" v-if="payTarget" @click.self="payTarget = null">
-        <div class="modal modal-sm">
-          <div class="modal-header">
-            <h3><span class="material-symbols-rounded">check_circle</span> تأكيد الدفع</h3>
-            <button class="modal-close" @click="payTarget = null"><span class="material-symbols-rounded">close</span></button>
-          </div>
-          <div class="modal-body">
-            <div style="display:flex;flex-direction:column;gap:.5rem;font-size:.9rem">
-              <div style="display:flex;justify-content:space-between">
-                <span style="color:var(--text-light)">الاسم:</span>
-                <span style="font-weight:700">{{ payTarget.name }}</span>
-              </div>
-              <div style="display:flex;justify-content:space-between">
-                <span style="color:var(--text-light)">عدد الامبيرات:</span>
-                <span style="font-weight:700">{{ payTarget.amps }} أمبير</span>
-              </div>
-              <div style="display:flex;justify-content:space-between">
-                <span style="color:var(--text-light)">سعر الامبير:</span>
-                <span style="font-weight:700">{{ formatMoney(pricePerAmp) }} د.ع</span>
-              </div>
-              <div style="display:flex;justify-content:space-between;padding-top:.5rem;border-top:1px solid var(--border);margin-top:.25rem">
-                <span style="font-weight:700;font-size:1rem">المبلغ المستحق:</span>
-                <span style="font-weight:800;font-size:1.3rem;color:var(--primary)">{{ formatMoney(payTarget.amps * pricePerAmp) }} د.ع</span>
-              </div>
+            <div style="font-size:.7rem;font-weight:700;color:var(--primary)">{{ formatMoney(sub.amps * pricePerAmp) }}</div>
+            <div style="display:flex;gap:3px">
+              <button v-if="!getPayStatus(sub.id)" class="btn btn-success btn-xs" @click.stop="doPay(sub)" title="تسديد"><i class="fas fa-check"></i></button>
+              <button v-if="getPayStatus(sub.id)" class="btn btn-warning btn-xs" @click.stop="undoPay(sub)" title="الغاء"><i class="fas fa-undo"></i></button>
+              <button class="btn btn-info btn-xs" @click.stop="whatsApp(sub)" title="رسالة"><i class="fab fa-whatsapp"></i></button>
             </div>
           </div>
-          <div class="modal-footer">
-            <button class="btn btn-success" @click="confirmPay"><span class="material-symbols-rounded">check</span> تأكيد الدفع</button>
-            <button class="btn btn-ghost" @click="payTarget = null">إلغاء</button>
-          </div>
+        </div>
+      </div>
+
+      <!-- رسالة عدم وجود نتائج -->
+      <div v-if="displayList.length === 0" class="card">
+        <div class="empty-state" style="padding:2rem">
+          <i class="fas fa-search" style="font-size:3rem"></i>
+          <p>{{ subscribers.length === 0 ? 'لا يوجد مشتركين في النظام' : 'لا توجد نتائج للبحث' }}</p>
         </div>
       </div>
 
@@ -103,12 +73,12 @@ GM.registerView('quickpay', {
       <div class="modal-overlay" v-if="showReceipt" @click.self="showReceipt = false">
         <div class="modal modal-sm">
           <div class="modal-header">
-            <h3><span class="material-symbols-rounded">receipt</span> سند قبض</h3>
-            <button class="modal-close" @click="showReceipt = false"><span class="material-symbols-rounded">close</span></button>
+            <h3><i class="fas fa-receipt"></i> سند قبض</h3>
+            <button class="modal-close" @click="showReceipt = false"><i class="fas fa-times"></i></button>
           </div>
           <div class="modal-body" id="receiptContent">
             <div style="text-align:center;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:2px dashed var(--border)">
-              <div style="font-size:1.3rem;font-weight:800;color:var(--primary)"><span class="material-symbols-rounded">bolt</span> نظام إدارة المولدات</div>
+              <div style="font-size:1.3rem;font-weight:800;color:var(--primary)"><i class="fas fa-bolt"></i> نظام إدارة المولدات</div>
               <div style="font-size:.75rem;color:var(--text-light)">سند قبض نقدي</div>
             </div>
             <div style="display:flex;flex-direction:column;gap:.4rem;font-size:.85rem">
@@ -127,34 +97,12 @@ GM.registerView('quickpay', {
               </div>
             </div>
             <div style="margin-top:.75rem;padding-top:.5rem;border-top:1px solid var(--border);font-size:.75rem;color:var(--text-light);text-align:center">
-              <span class="material-symbols-rounded" style="color:var(--success)">check_circle</span> تم الدفع بنجاح
+              <i class="fas fa-check-circle" style="color:var(--success)"></i> تم الدفع بنجاح
             </div>
           </div>
           <div class="modal-footer">
-            <button class="btn btn-primary" @click="printReceipt"><span class="material-symbols-rounded">print</span> طباعة</button>
+            <button class="btn btn-primary" @click="printReceipt"><i class="fas fa-print"></i> طباعة</button>
             <button class="btn btn-ghost" @click="showReceipt = false">اغلاق</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- مودال اختيار قالب الرسالة -->
-      <div class="modal-overlay" v-if="showTemplatePicker && templatePickSub" @click.self="closeTemplatePicker">
-        <div class="modal modal-sm">
-          <div class="modal-header">
-            <h3><span class="material-symbols-rounded">chat</span> اختر قالب الرسالة</h3>
-            <button class="modal-close" @click="closeTemplatePicker"><span class="material-symbols-rounded">close</span></button>
-          </div>
-          <div class="modal-body">
-            <div v-if="templates.length === 0" class="empty-state" style="padding:1rem">
-              <p>لا توجد قوالب رسائل متاحة</p>
-            </div>
-            <div v-for="t in templates" :key="t.id" class="template-card" @click="sendWhatsAppWithTemplate(t)" style="cursor:pointer;margin-bottom:.4rem">
-              <div class="template-title">
-                <span class="material-symbols-rounded" style="color:var(--primary);font-size:1rem">mail</span>
-                <span>{{ t.title }}</span>
-              </div>
-              <div class="template-body" style="white-space:pre-wrap;font-size:.78rem">{{ t.body }}</div>
-            </div>
           </div>
         </div>
       </div>
@@ -166,12 +114,8 @@ GM.registerView('quickpay', {
       searchQuery: '',
       payMonth: now.getMonth() + 1,
       payYear: now.getFullYear(),
-      payTarget: null,
       showReceipt: false,
-      receiptData: { number: '', date: '', name: '', phone: '', month: '', amount: '', amps: '', pricePerAmp: '' },
-      showTemplatePicker: false,
-      templatePickSub: null,
-      selectedTemplate: null
+      receiptData: { number: '', date: '', name: '', phone: '', month: '', amount: '', amps: '', pricePerAmp: '' }
     };
   },
   computed: {
@@ -183,7 +127,6 @@ GM.registerView('quickpay', {
       return y;
     },
     pricePerAmp() { return this.store.getPricePerAmp(this.payMonth, this.payYear); },
-    templates() { return this.store.messageTemplates; },
     displayList() {
       const q = this.searchQuery.trim().toLowerCase();
       let list = this.store.subscribers;
@@ -193,7 +136,7 @@ GM.registerView('quickpay', {
           (s.phone && s.phone.includes(q))
         );
       }
-      return list.filter(s => !this.getPayStatus(s.id)).slice(0, 50);
+      return list.slice(0, 50);
     }
   },
   mounted() {
@@ -213,15 +156,6 @@ GM.registerView('quickpay', {
     getPayStatus(subId) {
       const p = this.store.getPayment(subId, this.payMonth, this.payYear);
       return p ? p.paid : false;
-    },
-    openPay(sub) {
-      this.payTarget = sub;
-    },
-    confirmPay() {
-      if (!this.payTarget) return;
-      const sub = this.payTarget;
-      this.payTarget = null;
-      this.doPay(sub);
     },
     doPay(sub) {
       this.store.togglePayment(sub.id, this.payMonth, this.payYear, true);
@@ -252,10 +186,10 @@ GM.registerView('quickpay', {
       win.document.write(`
         <!DOCTYPE html><html dir="rtl" lang="ar">
         <head><meta charset="UTF-8"><title>سند قبض</title>
-        <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800&display=swap" rel="stylesheet">
         <style>
           *{margin:0;padding:0;box-sizing:border-box}
-          body{font-family:'Cairo',sans-serif;padding:1.5rem;color:#0f172a;font-size:14px;direction:rtl}
+          body{font-family:'Tajawal',sans-serif;padding:1.5rem;color:#0f172a;font-size:14px;direction:rtl}
           .receipt{max-width:320px;margin:0 auto}
           .header{text-align:center;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:2px dashed #e2e8f0}
           .header h1{font-size:1.3rem;color:#6366f1}
@@ -269,7 +203,7 @@ GM.registerView('quickpay', {
         </style>
         </head><body>
         <div class="receipt">
-          <div class="header"><h1><span class="material-symbols-rounded">bolt</span> نظام إدارة المولدات</h1><p>سند قبض نقدي</p></div>
+          <div class="header"><h1><i class="fas fa-bolt"></i> نظام إدارة المولدات</h1><p>سند قبض نقدي</p></div>
           <div class="row"><span class="label">رقم السند:</span><span class="value" dir="ltr">${this.receiptData.number}</span></div>
           <div class="row"><span class="label">التاريخ:</span><span class="value">${this.receiptData.date}</span></div>
           <div class="row"><span class="label">الاسم:</span><span class="value">${this.receiptData.name}</span></div>
@@ -277,48 +211,27 @@ GM.registerView('quickpay', {
           <div class="row"><span class="label">الشهر:</span><span class="value">${this.receiptData.month}</span></div>
           <div class="row total"><span class="label">المبلغ:</span><span>${this.receiptData.amount} د.ع</span></div>
           <div class="row" style="font-size:.75rem;color:#94a3b8"><span>الامبيرات: ${this.receiptData.amps}</span><span>سعر الامبير: ${this.receiptData.pricePerAmp} د.ع</span></div>
-          <div class="footer"><span class="material-symbols-rounded" style="color:#10b981">check_circle</span> تم الدفع بنجاح</div>
+          <div class="footer"><i class="fas fa-check-circle" style="color:#10b981"></i> تم الدفع بنجاح</div>
         </div>
         <div class="no-print" style="text-align:center;margin-top:1rem">
-          <button onclick="window.print()" style="padding:.5rem 1.5rem;background:#6366f1;color:#fff;border:none;border-radius:8px;font-family:Cairo;font-size:.9rem;cursor:pointer"><span class="material-symbols-rounded">print</span> طباعة</button>
+          <button onclick="window.print()" style="padding:.5rem 1.5rem;background:#6366f1;color:#fff;border:none;border-radius:8px;font-family:Tajawal;font-size:.9rem;cursor:pointer"><i class="fas fa-print"></i> طباعة</button>
         </div>
         </body></html>
       `);
       win.document.close();
     },
     whatsApp(sub) {
-      this.templatePickSub = sub;
-      this.showTemplatePicker = true;
-    },
-    closeTemplatePicker() {
-      this.showTemplatePicker = false;
-      this.templatePickSub = null;
-      this.selectedTemplate = null;
-    },
-    sendWhatsAppWithTemplate(t) {
-      const sub = this.templatePickSub;
-      if (!sub) return;
-      const body = this.fillTemplate(t.body, sub);
-      const phone = this.normalizePhone(sub.phone);
-      window.open(`https://wa.me/${phone}?text=${encodeURIComponent(body)}`, '_blank');
-      this.closeTemplatePicker();
-    },
-    fillTemplate(body, sub) {
-      if (!sub) return body;
-      return body
-        .replace(/{name}/g, sub.name)
-        .replace(/{month}/g, this.monthName(this.payMonth))
-        .replace(/{amount}/g, this.formatMoney(sub.amps * this.pricePerAmp))
-        .replace(/{amps}/g, sub.amps)
-        .replace(/{phone}/g, sub.phone || '');
-    },
-    normalizePhone(phone) {
-      let p = phone.replace(/\s/g, '');
-      if (p.startsWith('0')) p = '964' + p.slice(1);
-      else if (!p.startsWith('964') && !p.startsWith('+')) p = '964' + p;
-      return p.replace(/^\+/, '');
+      const price = this.pricePerAmp;
+      const total = sub.amps * price;
+      const msg = encodeURIComponent(
+        `عزيزي المشترك ${sub.name}\nفاتورة شهر ${this.monthName(this.payMonth)} ${this.payYear}\n` +
+        `المبلغ: ${this.formatMoney(total)} د.ع\nالرجاء التكرم بالدفع`
+      );
+      let phone = sub.phone.replace(/\s/g, '');
+      if (phone.startsWith('0')) phone = '964' + phone.slice(1);
+      else if (!phone.startsWith('964')) phone = '964' + phone;
+      window.open(`https://wa.me/${phone}?text=${msg}`, '_blank');
     },
     showToast(msg, type) { this.$emit('toast', msg, type); }
   }
 });
-
